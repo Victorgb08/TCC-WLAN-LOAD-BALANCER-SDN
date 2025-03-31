@@ -24,17 +24,18 @@ cd TCC-WLAN-LOAD-BALANCING-SDN
 python3.9 -m venv ryu-env
 source ryu-env/bin/activate
 pip install ryu eventlet==0.30.2
+pip install redis
 
 ryu-manager --version
 
 ## Rodar o projeto base
 ### Termninal 1
 deactivate
-python3 topology.py
+sudo python3 topology.py
 
 ### Terminal 2
 source ryu-env/bin/activate
-ryu-manager app.py
+sudo ryu-manager app.py
 
 ### Terminal 3
 sudo chmod +x generate_traffic.sh
