@@ -11,7 +11,7 @@ from mn_wifi.wmediumdConnector import interference
 
 N_hosts = 50
 
-mappings_file_path = "mappings_hd_total.txt"
+mappings_file_path = "mappings/mappings_high.txt"
 
 class Host:
     def __init__(self, name, mac, ip):

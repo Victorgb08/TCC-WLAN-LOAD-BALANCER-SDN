@@ -20,7 +20,7 @@ cd ..
 ```
 ## Clonar o projeto
 ```bash
-git clone https://github.com/Victorgb08/TCC-WLAN-LOAD-BALANCING-SDN
+git clone https://github.com/Victorgb08/TCC-WLAN-LOAD-BALANCER-SDN
 ```
 ## Criar ambiente com versão correta do python e dependências
 ```bash
@@ -37,7 +37,7 @@ sudo apt install redis-server -y
 sudo apt install iperf3 -y
 ```
 ```bash
-cd TCC-WLAN-LOAD-BALANCING-SDN
+cd TCC-WLAN-LOAD-BALANCER-SDN
 python3.9 -m venv ryu-env
 source ryu-env/bin/activate
 pip install ryu eventlet==0.30.2
@@ -54,7 +54,7 @@ sudo python3 topology.py
 ### Terminal 2
 ```bash
 source ryu-env/bin/activate
-sudo ryu-manager app.py
+ryu-manager app.py
 ```
 ### Terminal 3
 ```bash
