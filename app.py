@@ -17,7 +17,7 @@ STATION_THRESHOLD = 6
 # STATION_THRESHOLD = 2
 SIGNAL_THRESHOLD = -90 # dBm
 
-mappings_path = "mappings/mappings_hd.txt"
+mappings_path = "mappings/mappings.txt"
 
 station_name_mappings = {}
 name_ip_mac_mappings = {}

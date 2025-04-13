@@ -16,7 +16,7 @@ import pickle
 LOAD_THRESHOLD = 13 # 13Mbps
 SIGNAL_THRESHOLD = -90 # dBm
 
-mappings_path = "mappings.txt"
+mappings_path = "mappings/mappings_ld.txt"
 
 station_name_mappings = {}
 name_ip_mac_mappings = {}
