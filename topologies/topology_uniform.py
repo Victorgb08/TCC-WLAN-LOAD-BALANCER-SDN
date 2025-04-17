@@ -1,5 +1,5 @@
 import sys
-
+import argparse
 from mininet.log import setLogLevel, info
 from mn_wifi.cli import CLI
 from mn_wifi.net import Mininet_wifi
@@ -9,9 +9,14 @@ from mn_wifi.link import wmediumd
 from mininet.link import TCLink
 from mn_wifi.wmediumdConnector import interference
 
-N_hosts = 5
+# Configurar argumentos de linha de comando
+parser = argparse.ArgumentParser(description="Uniform Topology Configuration")
+parser.add_argument("--hosts", type=int, default=5, help="Number of hosts (default: 5)")
+parser.add_argument("--mappings", type=str, default="mappings/mappings_uniform.txt", help="Path to the mappings file")
+args = parser.parse_args()
 
-mappings_file_path = "mappings/mappings_uniform.txt"
+N_hosts = args.hosts
+mappings_file_path = args.mappings
 
 class Host:
     def __init__(self, name, mac, ip):
@@ -52,9 +57,7 @@ def topology():
 
     server = net.addHost('server', mac='00:00:00:00:00:01', ip='10.0.0.1/8')
 
-    staPositions = [
-        '15,15,0', '35,15,0', '55,15,0', '25,35,0', '45,35,0'  # Positions for 5 hosts
-    ]
+    staPositions = [f"{10 + (i % 5) * 20},{10 + (i // 5) * 20},0" for i in range(N_hosts)]
 
     f = open(mappings_file_path, "w")
     for i in range(N_hosts):

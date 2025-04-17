@@ -13,10 +13,18 @@ from ryu.lib import hub
 import redis
 import pickle
 
-LOAD_THRESHOLD = 13 # 13Mbps
-SIGNAL_THRESHOLD = -90 # dBm
+# Definir limiares específicos para cada topologia
+thresholds = {
+    "uniform": {"load": 13, "signal": -90},
+    "high": {"load": 20, "signal": -85},
+    "large": {"load": 15, "signal": -88},
+    # Adicione outras topologias aqui
+}
 
-mappings_path = "mappings/mappings_ld.txt"
+LOAD_THRESHOLD = thresholds[mappings_type]["load"]
+SIGNAL_THRESHOLD = thresholds[mappings_type]["signal"]
+
+mappings_path = "mappings/mappings_uniform.txt"
 
 station_name_mappings = {}
 name_ip_mac_mappings = {}
@@ -30,8 +38,7 @@ def read_mappings():
                 "ip": data[2].split('/')[0],
                 "mac": data[1]
             }
-
-    print('mapping', name_ip_mac_mappings)
+    print(f"Loaded mappings from {mappings_path}: {name_ip_mac_mappings}")
 class SimpleSwitch13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
 
@@ -49,36 +56,17 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.monitor_thread = hub.spawn(self.monitor)
 
     def monitor(self):
-        self.logger.info("start ap monitoring thread")
+        self.logger.info("Start AP monitoring thread")
         for item in self.pubsub.listen():
             tmp = item['data']
-            # ignore the first/initial return
-            if tmp == 1:
+            if tmp == 1:  # Ignore the first/initial return
                 continue
             self.statistics = pickle.loads(tmp)
-            print("---------------------------")
-            print("received the statistics ", self.statistics)
-            print("---------------------------")
-            oaps =  self.get_overloaded_aps()
-            print("Overloaded aps", oaps)
-            print("---------------------------")
+            self.logger.info(f"Received statistics: {self.statistics}")
+            oaps = self.get_overloaded_aps()
+            self.logger.info(f"Overloaded APs: {oaps}")
             uaps = self.get_underloaded_aps()
-            print("Underloaded aps", uaps)
-            print("---------------------------")
-            
-            if oaps and len(oaps) > 0 and uaps and len(uaps) > 0:
-                self.get_possible_handover(oaps, uaps)
-
-                station, new_ap = self.get_possible_handover(oaps, uaps)
-
-                if station and new_ap:
-                    migration_instruction = {'station_name': station, 'ssid': new_ap}
-                    print("station to be migrated ", migration_instruction)
-                    print("---------------------------")
-
-                    pvalue = pickle.dumps(migration_instruction)
-                    self.delete_flows_with_ip_and_mac(name_ip_mac_mappings[station])
-                    self.redis.publish("sdn", pvalue)
+            self.logger.info(f"Underloaded APs: {uaps}")
 
     def get_overloaded_aps(self):
         overloaded_aps = []
@@ -117,9 +105,16 @@ class SimpleSwitch13(app_manager.RyuApp):
                 station_rx = oap['stations_associated'][station]['rx_rate']
                 station_tx = oap['stations_associated'][station]['tx_rate']
 
-                uap_available_ssids = set([ap['ssid'] for ap in uaps if ap['total_rx_rate'] + station_rx < LOAD_THRESHOLD and ap['total_tx_rate'] + station_tx < LOAD_THRESHOLD])
-
-                strong_ssids = set([ap for ap in station_aps if float(station_aps[ap]) > SIGNAL_THRESHOLD and ap != oap['ssid']])
+                uap_available_ssids = set([
+                    ap['ssid'] for ap in uaps
+                    if ap['total_rx_rate'] + station_rx < LOAD_THRESHOLD and
+                       ap['total_tx_rate'] + station_tx < LOAD_THRESHOLD
+                ])
+                
+                strong_ssids = set([
+                    ap for ap in station_aps
+                    if float(station_aps[ap]) > SIGNAL_THRESHOLD and ap != oap['ssid']
+                ])
                 possible_uaps = strong_ssids & uap_available_ssids
                 if len(possible_uaps) > 0:
                     new_ap = next(iter(possible_uaps))
@@ -164,6 +159,8 @@ class SimpleSwitch13(app_manager.RyuApp):
     def delete_flows_with_ip_and_mac(self, ip_and_mac):
         ip = ip_and_mac['ip']
         mac = ip_and_mac['mac']
+        self.logger.info(f"Deleting flows for IP: {ip}, MAC: {mac}")
+        # Resto do código permanece o mesmo
         for dp in self.datapaths.values():
             # IP as destination
             parser = dp.ofproto_parser
@@ -255,7 +252,7 @@ class SimpleSwitch13(app_manager.RyuApp):
                 # verify if we have a valid buffer_id, if yes avoid to send both
                 # flow_mod & packet_out
                 if msg.buffer_id != ofproto.OFP_NO_BUFFER:
-                    self.add_flow(datapath, 1, match, actions, msg.buffer_id, idle=30)
+                    self.add_flow(datapath, 1, match, actions, msg.buffer_id, idle=60)
                     return
                 else:
                     self.add_flow(datapath, 1, match, actions,idle=30)
