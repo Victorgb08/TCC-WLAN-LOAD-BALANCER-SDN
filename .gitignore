@@ -6,3 +6,4 @@ __pycache__/**
 /mappings/*
 /server_output.txt
 /playground.py
+plot/

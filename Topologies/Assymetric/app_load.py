@@ -11,6 +11,8 @@ from ryu.lib import hub
 
 import redis
 import pickle
+import json  # Import necessário para manipular JSON
+from datetime import datetime  # Import necessário para o timestamp
 
 LOAD_THRESHOLD = 13  # 13 Mbps
 SIGNAL_THRESHOLD = -90  # dBm
@@ -47,7 +49,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.pubsub = self.redis.pubsub()
         self.pubsub.subscribe(['statistics'])
         self.monitor_thread = hub.spawn(self.monitor)
-
+    
     def monitor(self):
         self.logger.info("Start AP monitoring thread")
         for item in self.pubsub.listen():
@@ -59,24 +61,61 @@ class SimpleSwitch13(app_manager.RyuApp):
             print("---------------------------")
             print("Received statistics: ", self.statistics)
             print("---------------------------")
+            
+            # Identificar APs sobrecarregados e subutilizados
             oaps = self.get_overloaded_aps()
             print("Overloaded APs: ", oaps)
             print("---------------------------")
             uaps = self.get_underloaded_aps()
             print("Underloaded APs: ", uaps)
             print("---------------------------")
-
+    
+            # Preparar os dados para salvar no JSON
+            data_to_save = {
+                "timestamp": datetime.now().isoformat(),  # Adicionar timestamp
+                "statistics": self.statistics,
+                "overloaded_aps": oaps,
+                "underloaded_aps": uaps,
+                "handover_decision": None  # Inicialmente sem decisão
+            }
+    
+            # Decisão de handover
             if oaps and len(oaps) > 0 and uaps and len(uaps) > 0:
                 station, new_ap = self.get_possible_handover(oaps, uaps)
-
+    
                 if station and new_ap:
                     migration_instruction = {'station_name': station, 'ssid': new_ap}
                     print("Station to be migrated: ", migration_instruction)
                     print("---------------------------")
-
+    
+                    # Atualizar a decisão de handover no JSON
+                    data_to_save["handover_decision"] = {
+                        "station_name": station,
+                        "new_ap": new_ap
+                    }
+    
+                    # Publicar a instrução de migração
                     pvalue = pickle.dumps(migration_instruction)
                     self.delete_flows_with_ip_and_mac(name_ip_mac_mappings[station])
                     self.redis.publish("sdn", pvalue)
+                else:
+                    print("No handover required")
+                    print("---------------------------")
+            else:
+                print("No handover required (no overloaded or underloaded APs)")
+                print("---------------------------")
+    
+            # Salvar as estatísticas e decisões no arquivo JSON
+            try:
+                with open("load_statistics.json", "r") as f:
+                    existing_data = json.load(f)
+            except (FileNotFoundError, json.JSONDecodeError):
+                existing_data = []
+    
+            existing_data.append(data_to_save)
+    
+            with open("load_statistics.json", "w") as f:
+                json.dump(existing_data, f, indent=4)
 
     def get_overloaded_aps(self):
         overloaded_aps = []

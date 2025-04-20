@@ -4,6 +4,8 @@ import threading
 import time
 import pickle
 import re
+import json
+from datetime import datetime  # Import necessário para o timestamp
 
 # APs
 aps = ['ap1', 'ap2']
@@ -15,7 +17,7 @@ ap_metrics = []
 
 mappings_path = "mappings.txt"
 AP_METRICS_PERIOD_IN_SECONDS = 10
-REDIS_UPDATE_PERIOD_IN_SECONDS = 5
+REDIS_UPDATE_PERIOD_IN_SECONDS = 10
 
 # Utility functions
 
@@ -108,6 +110,9 @@ def measures_ap_metrics():
         apifname = ap + "-wlan1"
         result["if_name"] = apifname
 
+        # Adicionar o timestamp
+        result["timestamp"] = datetime.now().isoformat()  # Formato ISO 8601
+
         # Get SSID
         cmd = ['iw', 'dev', apifname, 'info']
         output = run_cmd(cmd)
@@ -142,7 +147,19 @@ def measures_ap_metrics():
         report.append(result)
         dpid += 1
 
-    # Print the collected statistics
+    # Adicionar as métricas ao arquivo JSON existente
+    try:
+        with open("ap_metrics.json", "r") as f:
+            existing_data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        existing_data = []
+
+    existing_data.extend(report)
+
+    with open("ap_metrics.json", "w") as f:
+        json.dump(existing_data, f, indent=4)
+
+    # Print opcional para depuração
     print("Collected AP Metrics:")
     for ap_stat in report:
         print(ap_stat)

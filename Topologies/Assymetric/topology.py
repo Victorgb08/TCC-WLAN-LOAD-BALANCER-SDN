@@ -46,10 +46,10 @@ def topology():
     )
 
     info("*** Adicionando APs e controladores\n")
-    ap1 = net.addAccessPoint('ap1', ssid='ssid-ap1', channel='1', mode='g', position='30,30,0', range=30)
-    ap2 = net.addAccessPoint('ap2', ssid='ssid-ap2', channel='6', mode='g', position='70,30,0', range=30)
+    ap1 = net.addAccessPoint('ap1', ssid='ssid-ap1', channel='1', mode='g', position='30,30,0', range=50)
+    ap2 = net.addAccessPoint('ap2', ssid='ssid-ap2', channel='6', mode='g', position='70,30,0', range=50)
 
-    c1 = net.addController('c1', controller=RemoteController)
+    c1 = net.addController('c1')
 
     info("*** Adicionando estações à topologia\n")
     server = net.addHost('server', mac='00:00:00:00:00:01', ip='10.0.0.1/8')
