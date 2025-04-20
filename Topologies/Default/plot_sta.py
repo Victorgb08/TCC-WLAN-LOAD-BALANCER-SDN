@@ -40,7 +40,7 @@ print(data.columns)
 print("\nEstatísticas de largura de banda (Mbps):")
 print(data['bandwidth_mbps'].describe())
 
-# Criar um único gráfico com todas as estações
+# Criar um único gráfico com todas as estações (largura de banda)
 plt.figure(figsize=(12, 8))
 unique_src_ips = data['src_ip'].unique()
 
@@ -48,10 +48,26 @@ for src_ip in unique_src_ips:
     subset = data[data['src_ip'] == src_ip]
     sns.lineplot(data=subset, x="timestamp", y="bandwidth_mbps", label=src_ip, marker='o')
 
-# Configurar o gráfico
+# Configurar o gráfico de largura de banda
 plt.title("Largura de Banda ao Longo do Tempo - Todas as Estações")
 plt.xlabel("Tempo")
 plt.ylabel("Largura de Banda (Mbps)")
+plt.legend(title="Estação (src_ip)")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Criar um gráfico de perda de pacotes por host
+plt.figure(figsize=(12, 8))
+
+for src_ip in unique_src_ips:
+    subset = data[data['src_ip'] == src_ip]
+    sns.lineplot(data=subset, x="timestamp", y="loss_percentage", label=src_ip, marker='o')
+
+# Configurar o gráfico de perda de pacotes
+plt.title("Perda de Pacotes ao Longo do Tempo - Todas as Estações")
+plt.xlabel("Tempo")
+plt.ylabel("Perda de Pacotes (%)")
 plt.legend(title="Estação (src_ip)")
 plt.grid(True)
 plt.tight_layout()

@@ -1,0 +1,67 @@
+1. Topologia com 2 APs e 4 Hosts (Referência)
+• Configuração: 2 APs e 4 hosts.
+• Descrição: Configuração simples com poucos dispositivos, utilizada como referência inicial no estudo.
+• Banda: 2,4 Ghz
+• Thresholds:
+– Limite de 2 hosts por AP.
+– Limite de 32 Mbps de carga por AP.
+• Características:
+– Alcance dos APs: 50 metros radiais.
+– Modelo de decaimento de potência: Logarítmico.
+
+3. Topologia com Densidade Baixa
+• Configuração: 3 APs e 30 hosts.
+• Descrição: Poucos APs em relação ao número de hosts, simulando sobrecarga
+nos pontos de acesso.
+• Banda: 2,4 Ghz
+• Thresholds:
+– Limite de 10 hosts por AP.
+– Limite de 13 Mbps de carga por AP.
+• Características:
+– Alcance dos APs: 30 metros radiais.
+– Modelo de decaimento de potência: Logarítmico.
+4. Topologia com Alta Densidade de APs
+• Configuração: 6 APs e 15 hosts.
+• Descrição: Muitos APs em comparação aos hosts, criando uma rede distribuída
+com menor carga por AP.
+• Banda: 2,4 Ghz
+• Thresholds:
+– Limite de 6 hosts por AP.
+– Limite de 13 Mbps de carga por AP.
+• Características:
+– Alcance dos APs: 30 metros radiais.
+– Modelo de decaimento de potência: Logarítmico.
+5. Topologia Uniforme
+• Configuração: 5 APs e 5 hosts.
+• Descrição: Igual número de APs e hosts, representando um cenário equilibrado.
+• Banda: 2,4 Ghz
+• Thresholds:
+– Limite de 2 hosts por AP.
+– Limite de 13 Mbps de carga por AP.
+• Características:
+– Alcance dos APs: 30 metros radiais.
+– Modelo de decaimento de potência: Logarítmico.
+6. Topologia de Alta Densidade Total
+• Configuração: 8 APs e 50 hosts.
+• Descrição: Muitos APs e muitos hosts, simulando redes em grandes eventos ou
+ambientes de alta densidade.
+
+• Banda: 2,4 Ghz
+• Thresholds:
+– Limite de 10 hosts por AP.
+– Limite de 13 Mbps de carga por AP.
+• Características:
+– Alcance dos APs: 30 metros radiais.
+– Modelo de decaimento de potência: Logarítmico.
+7. Topologia Assimétrica
+• Configuração: 4 APs, 10 hosts conectados ao AP1 e AP2, 20 hosts conectados
+ao AP3 e AP4.
+• Descrição: Distribuição não uniforme dos hosts, simulando áreas com diferentes
+densidades de usuários.
+• Banda: 2,4 Ghz
+• Thresholds:
+– Limite de 10 hosts por AP.
+– Limite de 13 Mbps de carga por AP.
+• Características:
+– Alcance dos APs: 30 metros radiais.
+– Modelo de decaimento de potência: Logarítmico

@@ -139,6 +139,9 @@ def measures_ap_metrics():
             result['stations_associated'][station_name]['rx_rate'] = rx_bw * 8 / 1_000_000  # Convert to Mbps
             result['stations_associated'][station_name]['tx_rate'] = tx_bw * 8 / 1_000_000  # Convert to Mbps
 
+            # Adicionar informações de sinal
+            result['stations_associated'][station_name]['aps'] = stations_aps[station_name].get('aps', {})
+
         report.append(result)
         dpid += 1
 

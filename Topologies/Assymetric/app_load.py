@@ -11,10 +11,8 @@ from ryu.lib import hub
 
 import redis
 import pickle
-import json  # Import necessário para manipular JSON
-from datetime import datetime  # Import necessário para o timestamp
 
-LOAD_THRESHOLD = 13  # 13 Mbps
+LOAD_THRESHOLD = 32  # 13 Mbps
 SIGNAL_THRESHOLD = -90  # dBm
 
 mappings_path = "mappings.txt"
@@ -49,7 +47,7 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.pubsub = self.redis.pubsub()
         self.pubsub.subscribe(['statistics'])
         self.monitor_thread = hub.spawn(self.monitor)
-    
+
     def monitor(self):
         self.logger.info("Start AP monitoring thread")
         for item in self.pubsub.listen():
@@ -61,61 +59,24 @@ class SimpleSwitch13(app_manager.RyuApp):
             print("---------------------------")
             print("Received statistics: ", self.statistics)
             print("---------------------------")
-            
-            # Identificar APs sobrecarregados e subutilizados
             oaps = self.get_overloaded_aps()
             print("Overloaded APs: ", oaps)
             print("---------------------------")
             uaps = self.get_underloaded_aps()
             print("Underloaded APs: ", uaps)
             print("---------------------------")
-    
-            # Preparar os dados para salvar no JSON
-            data_to_save = {
-                "timestamp": datetime.now().isoformat(),  # Adicionar timestamp
-                "statistics": self.statistics,
-                "overloaded_aps": oaps,
-                "underloaded_aps": uaps,
-                "handover_decision": None  # Inicialmente sem decisão
-            }
-    
-            # Decisão de handover
+
             if oaps and len(oaps) > 0 and uaps and len(uaps) > 0:
                 station, new_ap = self.get_possible_handover(oaps, uaps)
-    
+
                 if station and new_ap:
                     migration_instruction = {'station_name': station, 'ssid': new_ap}
                     print("Station to be migrated: ", migration_instruction)
                     print("---------------------------")
-    
-                    # Atualizar a decisão de handover no JSON
-                    data_to_save["handover_decision"] = {
-                        "station_name": station,
-                        "new_ap": new_ap
-                    }
-    
-                    # Publicar a instrução de migração
+
                     pvalue = pickle.dumps(migration_instruction)
                     self.delete_flows_with_ip_and_mac(name_ip_mac_mappings[station])
                     self.redis.publish("sdn", pvalue)
-                else:
-                    print("No handover required")
-                    print("---------------------------")
-            else:
-                print("No handover required (no overloaded or underloaded APs)")
-                print("---------------------------")
-    
-            # Salvar as estatísticas e decisões no arquivo JSON
-            try:
-                with open("load_statistics.json", "r") as f:
-                    existing_data = json.load(f)
-            except (FileNotFoundError, json.JSONDecodeError):
-                existing_data = []
-    
-            existing_data.append(data_to_save)
-    
-            with open("load_statistics.json", "w") as f:
-                json.dump(existing_data, f, indent=4)
 
     def get_overloaded_aps(self):
         overloaded_aps = []
@@ -149,25 +110,59 @@ class SimpleSwitch13(app_manager.RyuApp):
 
     def get_possible_handover(self, oaps, uaps):
         for oap in oaps:
+            print(f"\nAnalisando AP sobrecarregado: {oap['name']} (Total RX: {oap['total_rx_rate']}, Total TX: {oap['total_tx_rate']})")
             for station in oap['stations_associated']:
                 station_aps = oap['stations_associated'][station].get('aps', {})
                 station_rx = oap['stations_associated'][station].get('rx_rate', 0)
                 station_tx = oap['stations_associated'][station].get('tx_rate', 0)
-
-                uap_available_ssids = set(
-                    [ap['ssid'] for ap in uaps if ap['total_rx_rate'] + station_rx < LOAD_THRESHOLD and ap['total_tx_rate'] + station_tx < LOAD_THRESHOLD]
-                )
-
+    
+                print(f"  Estação: {station} (RX: {station_rx}, TX: {station_tx})")
+    
+                # Exibir o sinal entre a estação e os APs conhecidos
+                if station_aps:
+                    print(f"    Sinais entre {station} e APs:")
+                    for ap, signal in station_aps.items():
+                        print(f"      AP: {ap}, Sinal: {signal} dBm")
+                else:
+                    print(f"    Nenhuma informação de sinal disponível para a estação {station}.")
+    
+                # Verificar APs subutilizados que podem receber a estação
+                uap_available_ssids = set()
+                for ap in uaps:
+                    new_rx_rate = ap['total_rx_rate'] + station_rx
+                    new_tx_rate = ap['total_tx_rate'] + station_tx
+                    if new_rx_rate < LOAD_THRESHOLD and new_tx_rate < LOAD_THRESHOLD:
+                        uap_available_ssids.add(ap['ssid'])
+                        print(f"    AP subutilizado: {ap['name']} (Total RX: {ap['total_rx_rate']}, Total TX: {ap['total_tx_rate']})")
+                        print(f"      Após migração: RX: {new_rx_rate}, TX: {new_tx_rate} (Dentro do limite: {LOAD_THRESHOLD})")
+                    else:
+                        print(f"    AP subutilizado: {ap['name']} (Total RX: {ap['total_rx_rate']}, Total TX: {ap['total_tx_rate']})")
+                        print(f"      Após migração: RX: {new_rx_rate}, TX: {new_tx_rate} (Excede o limite: {LOAD_THRESHOLD})")
+    
+                # Verificar se o sinal é forte o suficiente no novo AP
                 strong_ssids = set(
                     [ap for ap in station_aps if float(station_aps[ap]) > SIGNAL_THRESHOLD and ap != oap['ssid']]
                 )
+                if not strong_ssids:
+                    print(f"    Nenhum AP com sinal forte suficiente para a estação {station} (Sinal mínimo: {SIGNAL_THRESHOLD} dBm)")
+                else:
+                    print(f"    APs com sinal forte para a estação {station}: {strong_ssids}")
+    
+                # Encontrar interseção entre APs disponíveis e com sinal forte
                 possible_uaps = strong_ssids & uap_available_ssids
                 if len(possible_uaps) > 0:
                     new_ap = next(iter(possible_uaps))
-
-                    print("Possible handover: ", station, new_ap)
+                    print(f"  Handover possível: Estação {station} -> Novo AP: {new_ap}")
                     return station, new_ap
-
+                else:
+                    print(f"  Handover não possível para a estação {station}:")
+                    if not uap_available_ssids:
+                        print("    - Nenhum AP subutilizado disponível.")
+                    if not strong_ssids:
+                        print("    - Nenhum AP com sinal forte suficiente.")
+                    if uap_available_ssids and strong_ssids:
+                        print("    - Nenhum AP atende ambas as condições (capacidade e sinal).")
+    
         return None, None
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)

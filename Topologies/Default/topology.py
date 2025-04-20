@@ -40,8 +40,8 @@ def topology():
 
     info("*** Adding 2 APs and controllers\n")
 
-    ap1 = net.addAccessPoint('ap1', ssid='ssid-ap1', channel='1',mode='g', position='30,30,0', range=30)
-    ap2 = net.addAccessPoint('ap2', ssid='ssid-ap2', channel='6',mode='g', position='70,30,0', range=30)
+    ap1 = net.addAccessPoint('ap1', ssid='ssid-ap1', channel='1', mode='g', position='30,30,0', range=50)
+    ap2 = net.addAccessPoint('ap2', ssid='ssid-ap2', channel='6', mode='g', position='70,30,0', range=50)
 
     c1 = net.addController('c1', controller=RemoteController)
 
