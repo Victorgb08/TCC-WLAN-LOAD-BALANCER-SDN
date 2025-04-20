@@ -3,18 +3,19 @@ import redis
 import threading
 import time
 import pickle
+import re
 
-#APs
-# aps = ['ap1', 'ap2']
-aps = ['ap1', 'ap2', 'ap3', 'ap4']
+# APs
+aps = ['ap1', 'ap2','ap3','ap4','ap5']
 
 stations_mapping = {}
 stations_aps = {}
 stations_traffic = {}
 ap_metrics = []
 
-mappings_path = "mappings/mappings_large.txt"
+mappings_path = "mappings.txt"
 AP_METRICS_PERIOD_IN_SECONDS = 10
+REDIS_UPDATE_PERIOD_IN_SECONDS = 5
 
 # Utility functions
 
@@ -28,79 +29,94 @@ def read_mappings():
     print('mapping', stations_mapping)
     print('aps', stations_aps)
 
-# execute the command
-def run_cmd(cmd):
+# Execute the command
+def run_cmd(cmd, timeout=15):  # Aumentado o timeout para 15 segundos
     try:
-        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        return output.decode('UTF-8','ignore')
-
+        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, timeout=timeout)
+        return output.decode('UTF-8', 'ignore')
+    except subprocess.TimeoutExpired:
+        print(f"Command timed out: {' '.join(cmd)}")
+        return None
     except subprocess.CalledProcessError as ex:
         if ex.returncode == 255:
-            raise RuntimeWarning(ex.output.strip())
-        raise RuntimeError('cmd execution returned exit status %d:\n%s'
-                % (ex.returncode, ex.output.strip()))
+            print(f"Warning: {ex.output.strip()}")
+            return None
+        print(f"Command execution returned exit status {ex.returncode}:\n{ex.output.strip()}")
+        return None
 
 # Parse SSID
 def get_ssid(output):
-    result = output.split("\n")
-    # parse the output and get the ssid
-    for data in result:
-        if "ssid" in data:
-            ssid = data.split(' ')[1]
-            return ssid
+    if not output:
+        return None
+    for line in output.split("\n"):
+        if "ssid" in line:
+            return line.split(' ')[1]
     return None
 
-# parse stations 
+# Parse stations
 def get_stations(output):
+    if not output:
+        return {}
     stations = {}
-    result = output.split("\n")
-    curr_station = ""
-    for data in result:
-        if "Station" in data:
-            station = data.split(' ')[1]
-            curr_station = station
-            stations[station] = {}
-        elif "rx bytes" in data:
-            rx_bytes = data.split('\t')[2]
-            stations[curr_station]["rx_bytes"] = rx_bytes
-        elif "tx bytes" in data:
-            tx_bytes = data.split('\t')[2]
-            stations[curr_station]["tx_bytes"] = tx_bytes
+    station_pattern = re.compile(r"Station\s+([0-9a-f:]+)")
+    rx_pattern = re.compile(r"rx bytes:\s+(\d+)")
+    tx_pattern = re.compile(r"tx bytes:\s+(\d+)")
+
+    curr_station = None
+    for line in output.split("\n"):
+        station_match = station_pattern.search(line)
+        if station_match:
+            curr_station = station_match.group(1)
+            stations[curr_station] = {}
+        elif curr_station:
+            rx_match = rx_pattern.search(line)
+            if rx_match:
+                stations[curr_station]["rx_bytes"] = rx_match.group(1)
+            tx_match = tx_pattern.search(line)
+            if tx_match:
+                stations[curr_station]["tx_bytes"] = tx_match.group(1)
     return stations
 
 def get_signal_strengths(output):
+    if not output:
+        return {}
     signal_strengths = {}
-    result = output.split("\n")
-    curr_strength = None
-    for data in result:
-        if "signal" in data:
-            signal = data.split(' ')[1]
-            curr_strength = signal
-        if "ssid" in data:
-            ssid = data.split(' ')[1]
-            signal_strengths[ssid] = curr_strength
+    signal_pattern = re.compile(r"signal:\s+(-\d+)")
+    ssid_pattern = re.compile(r"SSID:\s+(\S+)")
 
+    curr_signal = None
+    for line in output.split("\n"):
+        signal_match = signal_pattern.search(line)
+        if signal_match:
+            curr_signal = signal_match.group(1)
+        ssid_match = ssid_pattern.search(line)
+        if ssid_match:
+            ssid = ssid_match.group(1)
+            signal_strengths[ssid] = curr_signal
     return signal_strengths
+
+def calculate_bandwidth(curr_bytes, prev_bytes):
+    if int(curr_bytes) < int(prev_bytes):  # Handle counter reset
+        prev_bytes = 0
+    return (int(curr_bytes) - int(prev_bytes)) / AP_METRICS_PERIOD_IN_SECONDS
 
 def measures_ap_metrics():
     dpid = 1
-    report = []    
+    report = []
     for ap in aps:
-        result = {}
-        result["name"] = ap
-        result["dpid"] = dpid
+        result = {"name": ap, "dpid": dpid}
         apifname = ap + "-wlan1"
         result["if_name"] = apifname
 
-        #iw dev ap1-wlan1 info
+        # Get SSID
         cmd = ['iw', 'dev', apifname, 'info']
         output = run_cmd(cmd)
-        result["ssid"] = get_ssid(str(output))
-       
-        #get the stations associated
+        result["ssid"] = get_ssid(output)
+
+        # Get associated stations
         cmd = ['iw', 'dev', apifname, 'station', 'dump']
         output = run_cmd(cmd)
-        stations_associated = get_stations(str(output))
+        stations_associated = get_stations(output)
 
         result['stations_associated'] = {}
         for station in stations_associated:
@@ -110,57 +126,55 @@ def measures_ap_metrics():
             curr_rx_bytes = stations_associated[station].get("rx_bytes", 0)
             curr_tx_bytes = stations_associated[station].get("tx_bytes", 0)
 
-            if int(curr_rx_bytes) < int(prev_rx_bytes):
-                prev_rx_bytes = 0
-            if int(curr_tx_bytes) < int(prev_tx_bytes):
-                prev_tx_bytes = 0
-
             stations_traffic[station] = {
                 "rx_bytes": curr_rx_bytes,
                 "tx_bytes": curr_tx_bytes
             }
 
-            rx_bw = (int(curr_rx_bytes) - int(prev_rx_bytes)) / AP_METRICS_PERIOD_IN_SECONDS
-            tx_bw = (int(curr_tx_bytes) - int(prev_tx_bytes)) / AP_METRICS_PERIOD_IN_SECONDS
+            rx_bw = calculate_bandwidth(curr_rx_bytes, prev_rx_bytes)
+            tx_bw = calculate_bandwidth(curr_tx_bytes, prev_tx_bytes)
 
             station_name = stations_mapping[station]
             result['stations_associated'][station_name] = stations_aps[station_name]
-
-            result['stations_associated'][station_name]['rx_rate'] = rx_bw*8/1000000 #convert to Mbps
-            result['stations_associated'][station_name]['tx_rate'] = tx_bw*8/1000000 #convert to Mbps
+            result['stations_associated'][station_name]['rx_rate'] = rx_bw * 8 / 1_000_000  # Convert to Mbps
+            result['stations_associated'][station_name]['tx_rate'] = tx_bw * 8 / 1_000_000  # Convert to Mbps
 
         report.append(result)
-        dpid +=1
+        dpid += 1
+
+    # Print the collected statistics
+    print("Collected AP Metrics:")
+    for ap_stat in report:
+        print(ap_stat)
 
     return report
 
 class ApMetrics(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        
+
     def run(self):
         global ap_metrics
-        while 1:
+        while True:
             ap_metrics = measures_ap_metrics()
             time.sleep(AP_METRICS_PERIOD_IN_SECONDS)
-
 
 class StationMetrics(threading.Thread):
     def __init__(self, station_name):
         super().__init__()
-        threading.Thread.__init__(self)
         self.station_name = station_name
 
     def get_ap_strengths(self, station_name):
-        #iw dev sta1-wlan0 scan
         ssifname = station_name + "-wlan0"
         cmd = ['./m', station_name, 'iw', 'dev', ssifname, 'scan']
         output = run_cmd(cmd)
-        stations_aps[station_name] = {
-            'aps': get_signal_strengths(str(output)),
-        }
-        exit(1)
-        
+        if output:
+            stations_aps[station_name] = {
+                'aps': get_signal_strengths(output),
+            }
+        else:
+            print(f"Failed to get AP strengths for {station_name}")
+
     def run(self):
         self.get_ap_strengths(self.station_name)
 
@@ -172,15 +186,10 @@ class Sender(threading.Thread):
 
     def run(self):
         global ap_metrics
-        while 1:
-            print(ap_metrics)
-            print()
-            
+        while True:
             pvalue = pickle.dumps(ap_metrics)
             self.redis.publish("statistics", pvalue)
- 
-            time.sleep(20)
-
+            time.sleep(REDIS_UPDATE_PERIOD_IN_SECONDS)
 
 class Listener(threading.Thread):
     def __init__(self):
@@ -199,19 +208,15 @@ class Listener(threading.Thread):
             self.migrate(data)
 
     def migrate(self, data):
-        #./m sta1 iw dev sta1-wlan0 disconnect
-        #./m sta1 iw dev sta1-wlan1 connect ssid-ap2
-
         ifname = data['station_name'] + '-wlan0'
 
         cmd = ['./m', data['station_name'], 'iw', 'dev', ifname, 'disconnect']
-        print( cmd)
-        print( run_cmd(cmd))
+        print(cmd)
+        print(run_cmd(cmd))
 
         cmd = ['./m', data['station_name'], 'iw', 'dev', ifname, 'connect', data['ssid']]
-        print( cmd)
-        print( run_cmd(cmd))
-
+        print(cmd)
+        print(run_cmd(cmd))
         print()
 
 if __name__ == '__main__':
@@ -220,7 +225,7 @@ if __name__ == '__main__':
     for station in stations_mapping:
         station_monitor = StationMetrics(stations_mapping[station])
         station_monitor.start()
-    
+
     ap_monitor = ApMetrics()
     ap_monitor.start()
 

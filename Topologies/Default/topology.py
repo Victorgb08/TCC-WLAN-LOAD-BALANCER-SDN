@@ -11,7 +11,7 @@ from mn_wifi.wmediumdConnector import interference
 
 N_hosts = 4
 
-mappings_file_path = "mappings/mappings.txt"
+mappings_file_path = "mappings.txt"
 
 class Host:
     def __init__(self,name, mac, ip):
@@ -55,7 +55,7 @@ def topology():
     for i in range (int(N_hosts)):
         sta = net.addStation(hostsInfo[i].name, 
                              mac=hostsInfo[i].mac, ip=hostsInfo[i].ip,
-                   position=staPositions[i], range=10
+                   position=staPositions[i], range=13
                    )
         f.write(hostsInfo[i].name + " " + hostsInfo[i].mac + " " + hostsInfo[i].ip + "\n")
         hostsArray.append(sta)
@@ -80,7 +80,7 @@ def topology():
 
     net.plotGraph(min_x=0, max_x=100, min_y=-10, max_y=70)
 
-    # net.setMobilityModel(ac_method='ssf')
+    net.setMobilityModel(ac_method='ssf')
 
     info("*** Starting network\n")
     net.build()
