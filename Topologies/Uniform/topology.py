@@ -9,8 +9,8 @@ from mn_wifi.node import OVSKernelAP
 from mn_wifi.link import wmediumd
 from mn_wifi.wmediumdConnector import interference
 
-N_HOSTS = 5  # Número de hosts
-MAPPINGS_FILE_PATH = "mappings_uniform.txt"  # Caminho para o arquivo de mapeamento
+N_HOSTS = 10  # Número de hosts
+MAPPINGS_FILE_PATH = "mappings.txt"  # Caminho para o arquivo de mapeamento
 
 class Host:
     """Classe para representar um host na topologia."""
@@ -63,13 +63,13 @@ def topology():
     with open(MAPPINGS_FILE_PATH, "w") as f:
         for i, host in enumerate(hosts_info):
             # Posiciona as estações próximas aos APs
-            if i == 0:
+            if i == 0 or i == 1:
                 sta_x, sta_y = 20, 30  # Próximo ao AP1
-            elif i == 1:
+            elif i == 2 or i == 3:
                 sta_x, sta_y = 40, 30  # Próximo ao AP2
-            elif i == 2:
+            elif i == 4 or i == 5:
                 sta_x, sta_y = 60, 30  # Próximo ao AP3
-            elif i == 3:
+            elif i == 6 or i == 7:
                 sta_x, sta_y = 30, 60  # Próximo ao AP4
             else:
                 sta_x, sta_y = 50, 60  # Próximo ao AP5

@@ -13,8 +13,7 @@ from ryu.lib import hub
 import redis
 import pickle
 
-STATION_THRESHOLD = 2
-# STATION_THRESHOLD = 2
+STATION_THRESHOLD = 6
 SIGNAL_THRESHOLD = -90 # dBm
 
 mappings_path = "mappings.txt"

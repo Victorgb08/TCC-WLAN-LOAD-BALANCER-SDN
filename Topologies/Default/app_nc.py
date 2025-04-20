@@ -14,7 +14,6 @@ import redis
 import pickle
 
 STATION_THRESHOLD = 2
-# STATION_THRESHOLD = 2
 SIGNAL_THRESHOLD = -90 # dBm
 
 mappings_path = "mappings.txt"
