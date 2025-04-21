@@ -7,9 +7,10 @@ from mn_wifi.net import Mininet_wifi
 from mininet.node import RemoteController
 from mn_wifi.node import OVSKernelAP
 from mn_wifi.link import wmediumd
+from mininet.link import TCLink
 from mn_wifi.wmediumdConnector import interference
 
-N_HOSTS = 15  # Número de hosts
+N_HOSTS = 20  # Número de hosts
 MAPPINGS_FILE_PATH = "mappings.txt"  # Caminho para o arquivo de mapeamento
 
 class Host:
@@ -62,10 +63,21 @@ def topology():
     hosts_array = []
 
     with open(MAPPINGS_FILE_PATH, "w") as f:
-        for host in hosts_info:
-            # Posiciona as estações dentro da área coberta pelos APs
-            sta_x = random.randint(10, 70)
-            sta_y = random.randint(10, 70)
+        for i, host in enumerate(hosts_info):
+            # Posiciona as estações próximas aos APs
+            if i < 4:
+                sta_x, sta_y = random.randint(15, 25), random.randint(25, 35)  # Próximo ao ap1
+            elif i < 8:
+                sta_x, sta_y = random.randint(35, 45), random.randint(25, 35)  # Próximo ao ap2
+            elif i < 12:
+                sta_x, sta_y = random.randint(55, 65), random.randint(25, 35)  # Próximo ao ap3
+            elif i < 16:
+                sta_x, sta_y = random.randint(15, 25), random.randint(55, 65)  # Próximo ao ap4
+            elif i < 20:
+                sta_x, sta_y = random.randint(35, 45), random.randint(55, 65)  # Próximo ao ap5
+            else:
+                sta_x, sta_y = random.randint(55, 65), random.randint(55, 65)  # Próximo ao ap6
+
             sta = net.addStation(
                 host.name,
                 mac=host.mac,
@@ -82,18 +94,18 @@ def topology():
     net.configureWifiNodes()
 
     info("*** Criando links\n")
-    net.addLink(ap1, ap2)
-    net.addLink(ap2, ap3)
-    net.addLink(ap3, ap4)
-    net.addLink(ap4, ap5)
-    net.addLink(ap5, ap6)
+    net.addLink(ap1, ap2, cls=TCLink, bw=20)
+    net.addLink(ap2, ap3, cls=TCLink, bw=20)
+    net.addLink(ap3, ap4, cls=TCLink, bw=20)
+    net.addLink(ap4, ap5, cls=TCLink, bw=20)
+    net.addLink(ap5, ap6, cls=TCLink, bw=20)
 
-    net.addLink(server, ap1)
-    net.addLink(server, ap2)
-    net.addLink(server, ap3)
-    net.addLink(server, ap4)
-    net.addLink(server, ap5)
-    net.addLink(server, ap6)
+    net.addLink(server, ap1, cls=TCLink, bw=20)
+    net.addLink(server, ap2, cls=TCLink, bw=20)
+    net.addLink(server, ap3, cls=TCLink, bw=20)
+    net.addLink(server, ap4, cls=TCLink, bw=20)
+    net.addLink(server, ap5, cls=TCLink, bw=20)
+    net.addLink(server, ap6, cls=TCLink, bw=20)
 
     net.plotGraph(min_x=0, max_x=100, min_y=0, max_y=100)
 

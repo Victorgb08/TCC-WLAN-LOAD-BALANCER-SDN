@@ -103,6 +103,8 @@ def calculate_bandwidth(curr_bytes, prev_bytes):
 def measures_ap_metrics():
     dpid = 1
     report = []
+    total_rx_rates = []  # Array para armazenar as taxas RX de cada AP
+
     for ap in aps:
         result = {"name": ap, "dpid": dpid}
         apifname = ap + "-wlan1"
@@ -119,6 +121,8 @@ def measures_ap_metrics():
         stations_associated = get_stations(output)
 
         result['stations_associated'] = {}
+        total_rx_rate = 0  # Inicializa a soma da taxa RX do AP
+
         for station in stations_associated:
             prev_rx_bytes = stations_traffic.get(station, {}).get("rx_bytes", 0)
             prev_tx_bytes = stations_traffic.get(station, {}).get("tx_bytes", 0)
@@ -139,13 +143,22 @@ def measures_ap_metrics():
             result['stations_associated'][station_name]['rx_rate'] = rx_bw * 8 / 1_000_000  # Convert to Mbps
             result['stations_associated'][station_name]['tx_rate'] = tx_bw * 8 / 1_000_000  # Convert to Mbps
 
+            # Adicionar informações de sinal
+            result['stations_associated'][station_name]['aps'] = stations_aps[station_name].get('aps', {})
+            total_rx_rate += rx_bw * 8 / 1_000_000  # Convert to Mbps
+
+        # Adiciona a taxa RX total ao array
+        total_rx_rates.append(total_rx_rate)
+
         report.append(result)
         dpid += 1
 
     # Print the collected statistics
     print("Collected AP Metrics:")
-    for ap_stat in report:
-        print(ap_stat)
+    for i, ap_stat in enumerate(report):
+        ap_name = ap_stat["name"]
+        associated_stations = ", ".join(ap_stat["stations_associated"])
+        print(f"{ap_name} - {associated_stations} | Total RX: {total_rx_rates[i]:.2f} Mbps")
 
     return report
 

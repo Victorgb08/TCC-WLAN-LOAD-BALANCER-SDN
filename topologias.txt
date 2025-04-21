@@ -6,7 +6,7 @@
 – Limite de 2 hosts por AP.
 – Limite de 32 Mbps de carga por AP.
 • Características:
-– Alcance dos APs: 50 metros radiais.
+– Alcance dos APs: 30 metros radiais.
 – Modelo de decaimento de potência: Logarítmico.
 
 3. Topologia com Densidade Baixa

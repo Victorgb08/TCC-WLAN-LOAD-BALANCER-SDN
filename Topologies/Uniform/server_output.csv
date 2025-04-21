@@ -1,0 +1,1 @@
+exec sudo mnexec -a 51910 iperf -s -u -p 8 -i 1 -y C

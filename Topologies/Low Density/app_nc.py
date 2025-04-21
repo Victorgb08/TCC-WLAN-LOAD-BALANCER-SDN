@@ -13,8 +13,8 @@ from ryu.lib import hub
 import redis
 import pickle
 
-STATION_THRESHOLD = 6
-SIGNAL_THRESHOLD = -90 # dBm
+STATION_THRESHOLD = 10  # Limite de estações por AP
+SIGNAL_THRESHOLD = -75  # Limite de sinal em dBm
 
 mappings_path = "mappings.txt"
 

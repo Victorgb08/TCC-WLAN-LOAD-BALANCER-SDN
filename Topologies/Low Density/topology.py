@@ -7,9 +7,10 @@ from mn_wifi.net import Mininet_wifi
 from mininet.node import RemoteController
 from mn_wifi.node import OVSKernelAP
 from mn_wifi.link import wmediumd
+from mininet.link import TCLink
 from mn_wifi.wmediumdConnector import interference
 
-N_HOSTS = 10  # Número de hosts
+N_HOSTS = 20  # Número de hosts
 MAPPINGS_FILE_PATH = "mappings.txt"  # Caminho para o arquivo de mapeamento
 
 class Host:
@@ -45,8 +46,8 @@ def topology():
     )
 
     info("*** Adicionando APs e controladores\n")
-    ap1 = net.addAccessPoint('ap1', ssid='ssid-ap1', channel='1', mode='g', position='30,30,0', range=30)
-    ap2 = net.addAccessPoint('ap2', ssid='ssid-ap2', channel='6', mode='g', position='70,30,0', range=30)
+    ap1 = net.addAccessPoint('ap1', ssid='ssid-ap1', channel='1', mode='g', position='40,30,0', range=30)
+    ap2 = net.addAccessPoint('ap2', ssid='ssid-ap2', channel='6', mode='g', position='60,30,0', range=30)
 
     c1 = net.addController('c1', controller=RemoteController)
 
@@ -59,9 +60,9 @@ def topology():
 
     with open(MAPPINGS_FILE_PATH, "w") as f:
         for host in hosts_info:
-            # Posiciona as estações dentro da área coberta pelos APs
-            sta_x = random.randint(30, 70)
-            sta_y = random.randint(20, 40)
+            # Posiciona as estações dentro da área coberta pelos dois APs
+            sta_x = random.randint(45, 55)
+            sta_y = random.randint(25, 35)
             sta = net.addStation(
                 host.name,
                 mac=host.mac,
@@ -80,8 +81,8 @@ def topology():
     info("*** Criando links\n")
     net.addLink(ap1, ap2)
 
-    net.addLink(server, ap1)
-    net.addLink(server, ap2)
+    net.addLink(server, ap1, cls=TCLink, bw=20)
+    net.addLink(server, ap2, cls=TCLink, bw=20)
 
     net.plotGraph(min_x=0, max_x=100, min_y=0, max_y=100)
 

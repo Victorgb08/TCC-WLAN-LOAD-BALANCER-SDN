@@ -13,8 +13,8 @@ from ryu.lib import hub
 import redis
 import pickle
 
-STATION_THRESHOLD = 4
-SIGNAL_THRESHOLD = -90 # dBm
+STATION_THRESHOLD = 4  # Limite de estações por AP
+SIGNAL_THRESHOLD = -75  # Limite de sinal em dBm
 
 mappings_path = "mappings.txt"
 
@@ -97,9 +97,10 @@ class SimpleSwitch13(app_manager.RyuApp):
         return underloaded_aps
     
     def get_possible_handover(self, oaps, uaps):
-        uap_ssids = set([sta['ssid'] for sta in uaps])
+        uap_ssids = set([ap['ssid'] for ap in uaps])
     
         for oap in oaps:
+            print(f"\nAnalisando AP sobrecarregado: {oap['name']} (Conexões: {len(oap['stations_associated'])})")
             for station in oap['stations_associated']:
                 # Verificar se a estação tem informações de APs disponíveis
                 station_info = oap['stations_associated'][station]
@@ -112,10 +113,27 @@ class SimpleSwitch13(app_manager.RyuApp):
                 # Filtrar APs com sinal forte e diferentes do AP atual
                 strong_ssids = set([ap for ap in station_aps if float(station_aps[ap]) > SIGNAL_THRESHOLD and ap != oap['ssid']])
                 possible_uaps = strong_ssids & uap_ssids
+    
                 if len(possible_uaps) > 0:
-                    new_ap = next(iter(possible_uaps))
-                    print("possible handover", station, new_ap)
-                    return station, new_ap
+                    # Escolher o AP subutilizado com menos conexões
+                    best_uap = None
+                    min_connections = float('inf')
+                    for uap in uaps:
+                        if uap['ssid'] in possible_uaps and len(uap['stations_associated']) < min_connections:
+                            best_uap = uap
+                            min_connections = len(uap['stations_associated'])
+    
+                    if best_uap:
+                        print(f"  Handover possível: Estação {station} -> Novo AP: {best_uap['ssid']} (Conexões: {min_connections})")
+                        return station, best_uap['ssid']
+    
+                print(f"  Handover não possível para a estação {station}:")
+                if not uap_ssids:
+                    print("    - Nenhum AP subutilizado disponível.")
+                if not strong_ssids:
+                    print("    - Nenhum AP com sinal forte suficiente.")
+                if uap_ssids and strong_ssids:
+                    print("    - Nenhum AP atende ambas as condições (capacidade e sinal).")
     
         return None, None
         

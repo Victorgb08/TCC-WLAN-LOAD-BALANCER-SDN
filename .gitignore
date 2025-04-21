@@ -2,7 +2,7 @@ server_output.txt
 analise.ipynb
 *.apconf
 ryu-env/
-__pycache__/**
+**__pycache__/**
 /mappings/*
 /server_output.txt
 /playground.py
