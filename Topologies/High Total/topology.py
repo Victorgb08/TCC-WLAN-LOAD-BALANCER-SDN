@@ -94,11 +94,11 @@ def topology():
     net.configureWifiNodes()
 
     info("*** Criando links\n")
-    net.addLink(ap1, ap2, cls=TCLink, bw=20)
-    net.addLink(ap2, ap3, cls=TCLink, bw=20)
-    net.addLink(ap3, ap4, cls=TCLink, bw=20)
-    net.addLink(ap4, ap5, cls=TCLink, bw=20)
-    net.addLink(ap5, ap6, cls=TCLink, bw=20)
+    net.addLink(ap1, ap2)
+    net.addLink(ap2, ap3)
+    net.addLink(ap3, ap4)
+    net.addLink(ap4, ap5)
+    net.addLink(ap5, ap6)
 
     net.addLink(server, ap1, cls=TCLink, bw=20)
     net.addLink(server, ap2, cls=TCLink, bw=20)

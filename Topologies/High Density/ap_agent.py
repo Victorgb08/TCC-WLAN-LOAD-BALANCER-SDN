@@ -6,7 +6,7 @@ import pickle
 import re
 
 # APs
-aps = ['ap1', 'ap2', 'ap3']
+aps = ['ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6', 'ap7', 'ap8', 'ap9']
 
 stations_mapping = {}
 stations_aps = {}
@@ -15,7 +15,7 @@ ap_metrics = []
 
 mappings_path = "mappings.txt"
 AP_METRICS_PERIOD_IN_SECONDS = 10
-REDIS_UPDATE_PERIOD_IN_SECONDS = 5
+REDIS_UPDATE_PERIOD_IN_SECONDS = 10
 
 # Utility functions
 
@@ -143,9 +143,25 @@ def measures_ap_metrics():
         dpid += 1
 
     # Print the collected statistics
-    print("Collected AP Metrics:")
+    print("\n=========================== Métricas dos APs ===========================")
     for ap_stat in report:
-        print(ap_stat)
+        total_rx = 0
+        total_tx = 0
+        print(f"AP: {ap_stat['name']}")
+        print(f"  Estações Associadas: {len(ap_stat['stations_associated'])}")
+        for station_name, station_info in ap_stat['stations_associated'].items():
+            rx_rate = station_info.get('rx_rate', 0)
+            tx_rate = station_info.get('tx_rate', 0)
+            total_rx += rx_rate
+            total_tx += tx_rate
+            print(f"    Estação: {station_name}")
+            print(f"      Taxa de Recepção (RX): {rx_rate:.2f} Mbps")
+            print(f"      Taxa de Transmissão (TX): {tx_rate:.2f} Mbps")
+            print(f"      Sinal dos APs Disponíveis: {station_info.get('aps', {})}")
+        print(f"  Taxa Total de Recepção (RX): {total_rx:.2f} Mbps")
+        print(f"  Taxa Total de Transmissão (TX): {total_tx:.2f} Mbps")
+        print("-------------------------------------------------------------------------------")
+    print("===============================================================================")
 
     return report
 
