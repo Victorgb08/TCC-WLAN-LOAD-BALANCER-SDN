@@ -13,15 +13,15 @@ low_traffic = range(13, 19)  # Estações 13 a 18 (tráfego baixo)
 
 # Gera tráfego para o grupo de tráfego alto
 for i in high_traffic:
-    os.system(f'./m sta{i} iperf -c 10.0.0.1 -u -p 8 -b 10m -t 50 &')  # 10 Mbps
+    os.system(f'./m sta{i} iperf -c 10.0.0.1 -u -p 8 -b 2m -t 120 &')  # 10 Mbps
 
 # Gera tráfego para o grupo de tráfego médio
 for i in medium_traffic:
-    os.system(f'./m sta{i} iperf -c 10.0.0.1 -u -p 8 -b 5m -t 50 &')  # 5 Mbps
+    os.system(f'./m sta{i} iperf -c 10.0.0.1 -u -p 8 -b 5m -t 120 &')  # 5 Mbps
 
 # Gera tráfego para o grupo de tráfego baixo
 for i in low_traffic:
-    os.system(f'./m sta{i} iperf -c 10.0.0.1 -u -p 8 -b 2m -t 50 &')  # 2 Mbps
+    os.system(f'./m sta{i} iperf -c 10.0.0.1 -u -p 8 -b 10m -t 120 &')  # 2 Mbps
 
 # Aguarda o término do tráfego
-time.sleep(60)
+time.sleep(130)
