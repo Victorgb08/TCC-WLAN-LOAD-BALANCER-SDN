@@ -4,11 +4,9 @@ import threading
 import time
 import pickle
 import re
-import json
-from datetime import datetime  # Import necessário para o timestamp
 
 # APs
-aps = ['ap1', 'ap2']
+aps = ['ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6']
 
 stations_mapping = {}
 stations_aps = {}
@@ -110,9 +108,6 @@ def measures_ap_metrics():
         apifname = ap + "-wlan1"
         result["if_name"] = apifname
 
-        # Adicionar o timestamp
-        result["timestamp"] = datetime.now().isoformat()  # Formato ISO 8601
-
         # Get SSID
         cmd = ['iw', 'dev', apifname, 'info']
         output = run_cmd(cmd)
@@ -147,22 +142,26 @@ def measures_ap_metrics():
         report.append(result)
         dpid += 1
 
-    # Adicionar as métricas ao arquivo JSON existente
-    try:
-        with open("ap_metrics.json", "r") as f:
-            existing_data = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        existing_data = []
-
-    existing_data.extend(report)
-
-    with open("ap_metrics.json", "w") as f:
-        json.dump(existing_data, f, indent=4)
-
-    # Print opcional para depuração
-    print("Collected AP Metrics:")
+    # Print the collected statistics
+    print("\n=========================== Métricas dos APs ===========================")
     for ap_stat in report:
-        print(ap_stat)
+        total_rx = 0
+        total_tx = 0
+        print(f"AP: {ap_stat['name']}")
+        print(f"  Estações Associadas: {len(ap_stat['stations_associated'])}")
+        for station_name, station_info in ap_stat['stations_associated'].items():
+            rx_rate = station_info.get('rx_rate', 0)
+            tx_rate = station_info.get('tx_rate', 0)
+            total_rx += rx_rate
+            total_tx += tx_rate
+            print(f"    Estação: {station_name}")
+            print(f"      Taxa de Recepção (RX): {rx_rate:.2f} Mbps")
+            print(f"      Taxa de Transmissão (TX): {tx_rate:.2f} Mbps")
+            print(f"      Sinal dos APs Disponíveis: {station_info.get('aps', {})}")
+        print(f"  Taxa Total de Recepção (RX): {total_rx:.2f} Mbps")
+        print(f"  Taxa Total de Transmissão (TX): {total_tx:.2f} Mbps")
+        print("-------------------------------------------------------------------------------")
+    print("===============================================================================")
 
     return report
 
