@@ -1,9 +1,23 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+import sys
+
+# Verificar se o nome do arquivo foi passado como argumento
+if len(sys.argv) < 2:
+    print("Uso: python plot_sta.py <nome_do_arquivo>")
+    exit()
+
+# Nome do arquivo para salvar os gráficos
+file_name = sys.argv[1]
+
+# Criar a pasta "results" se não existir
+output_dir = "results"
+os.makedirs(output_dir, exist_ok=True)
 
 # Caminho do arquivo CSV
-file_path = "server_output.csv"
+file_path = f"{file_name}.csv"
 
 # Tentar carregar o arquivo como um DataFrame
 try:
@@ -52,10 +66,15 @@ for src_ip in unique_src_ips:
 plt.title("Largura de Banda ao Longo do Tempo - Todas as Estações")
 plt.xlabel("Tempo")
 plt.ylabel("Largura de Banda (Mbps)")
-plt.legend(title="Estação (src_ip)")
+plt.legend(title="Estação (src_ip)", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small')
 plt.grid(True)
 plt.tight_layout()
-plt.show()
+
+# Salvar o gráfico de largura de banda
+bandwidth_plot_path = os.path.join(output_dir, f"{file_name}_bandwidth.png")
+plt.savefig(bandwidth_plot_path, bbox_inches='tight')
+print(f"Gráfico de largura de banda salvo em: {bandwidth_plot_path}")
+plt.close()
 
 # Criar um gráfico de perda de pacotes por host
 plt.figure(figsize=(12, 8))
@@ -68,7 +87,12 @@ for src_ip in unique_src_ips:
 plt.title("Perda de Pacotes ao Longo do Tempo - Todas as Estações")
 plt.xlabel("Tempo")
 plt.ylabel("Perda de Pacotes (%)")
-plt.legend(title="Estação (src_ip)")
+plt.legend(title="Estação (src_ip)", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small')
 plt.grid(True)
 plt.tight_layout()
-plt.show()
+
+# Salvar o gráfico de perda de pacotes
+loss_plot_path = os.path.join(output_dir, f"{file_name}_loss.png")
+plt.savefig(loss_plot_path, bbox_inches='tight')
+print(f"Gráfico de perda de pacotes salvo em: {loss_plot_path}")
+plt.close()
