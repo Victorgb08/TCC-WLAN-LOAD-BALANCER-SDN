@@ -14,8 +14,8 @@ stations_traffic = {}
 ap_metrics = []
 
 mappings_path = "mappings.txt"
-AP_METRICS_PERIOD_IN_SECONDS = 10
-REDIS_UPDATE_PERIOD_IN_SECONDS = 10
+AP_METRICS_PERIOD_IN_SECONDS = 20
+REDIS_UPDATE_PERIOD_IN_SECONDS = 20
 
 # Utility functions
 
@@ -30,7 +30,7 @@ def read_mappings():
     print('aps', stations_aps)
 
 # Execute the command
-def run_cmd(cmd, timeout=15):  # Aumentado o timeout para 15 segundos
+def run_cmd(cmd, timeout=30):  # Aumentado o timeout para 15 segundos
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, timeout=timeout)
         return output.decode('UTF-8', 'ignore')

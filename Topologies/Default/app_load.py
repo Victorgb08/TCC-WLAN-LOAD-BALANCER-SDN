@@ -12,8 +12,8 @@ from ryu.lib import hub
 import redis
 import pickle
 
-LOAD_THRESHOLD = 32  # 13 Mbps
-SIGNAL_THRESHOLD = -90  # dBm
+LOAD_THRESHOLD = 16  # Limite de carga em Mbps (80% da capacidade do AP)
+SIGNAL_THRESHOLD = -90  # Limite de sinal em dBm (qualidade razoável)
 
 mappings_path = "mappings.txt"
 

@@ -14,7 +14,7 @@ import redis
 import pickle
 
 STATION_THRESHOLD = 4  # Limite de estações por AP
-SIGNAL_THRESHOLD = -75  # Limite de sinal em dBm
+SIGNAL_THRESHOLD = -90  # Limite de sinal em dBm
 
 mappings_path = "mappings.txt"
 
