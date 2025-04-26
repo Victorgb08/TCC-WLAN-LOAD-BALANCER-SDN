@@ -6,7 +6,7 @@ import pickle
 import re
 
 # APs
-aps = ['ap1', 'ap2']
+aps = ['ap1', 'ap2', 'ap3']
 
 stations_mapping = {}
 stations_aps = {}
@@ -15,7 +15,7 @@ ap_metrics = []
 
 mappings_path = "mappings.txt"
 AP_METRICS_PERIOD_IN_SECONDS = 10
-REDIS_UPDATE_PERIOD_IN_SECONDS = 5
+REDIS_UPDATE_PERIOD_IN_SECONDS = 20
 
 # Utility functions
 
@@ -30,7 +30,7 @@ def read_mappings():
     print('aps', stations_aps)
 
 # Execute the command
-def run_cmd(cmd, timeout=15):  # Aumentado o timeout para 15 segundos
+def run_cmd(cmd, timeout=40):  # Aumentado o timeout para 15 segundos
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, timeout=timeout)
         return output.decode('UTF-8', 'ignore')
@@ -103,8 +103,6 @@ def calculate_bandwidth(curr_bytes, prev_bytes):
 def measures_ap_metrics():
     dpid = 1
     report = []
-    total_rx_rates = []  # Array para armazenar as taxas RX de cada AP
-
     for ap in aps:
         result = {"name": ap, "dpid": dpid}
         apifname = ap + "-wlan1"
@@ -121,8 +119,6 @@ def measures_ap_metrics():
         stations_associated = get_stations(output)
 
         result['stations_associated'] = {}
-        total_rx_rate = 0  # Inicializa a soma da taxa RX do AP
-
         for station in stations_associated:
             prev_rx_bytes = stations_traffic.get(station, {}).get("rx_bytes", 0)
             prev_tx_bytes = stations_traffic.get(station, {}).get("tx_bytes", 0)
@@ -143,22 +139,29 @@ def measures_ap_metrics():
             result['stations_associated'][station_name]['rx_rate'] = rx_bw * 8 / 1_000_000  # Convert to Mbps
             result['stations_associated'][station_name]['tx_rate'] = tx_bw * 8 / 1_000_000  # Convert to Mbps
 
-            # Adicionar informações de sinal
-            result['stations_associated'][station_name]['aps'] = stations_aps[station_name].get('aps', {})
-            total_rx_rate += rx_bw * 8 / 1_000_000  # Convert to Mbps
-
-        # Adiciona a taxa RX total ao array
-        total_rx_rates.append(total_rx_rate)
-
         report.append(result)
         dpid += 1
 
     # Print the collected statistics
-    print("Collected AP Metrics:")
-    for i, ap_stat in enumerate(report):
-        ap_name = ap_stat["name"]
-        associated_stations = ", ".join(ap_stat["stations_associated"])
-        print(f"{ap_name} - {associated_stations} | Total RX: {total_rx_rates[i]:.2f} Mbps")
+    print("\n=========================== Métricas dos APs ===========================")
+    for ap_stat in report:
+        total_rx = 0
+        total_tx = 0
+        print(f"AP: {ap_stat['name']}")
+        print(f"  Estações Associadas: {len(ap_stat['stations_associated'])}")
+        for station_name, station_info in ap_stat['stations_associated'].items():
+            rx_rate = station_info.get('rx_rate', 0)
+            tx_rate = station_info.get('tx_rate', 0)
+            total_rx += rx_rate
+            total_tx += tx_rate
+            print(f"    Estação: {station_name}")
+            print(f"      Taxa de Recepção (RX): {rx_rate:.2f} Mbps")
+            print(f"      Taxa de Transmissão (TX): {tx_rate:.2f} Mbps")
+            print(f"      Sinal dos APs Disponíveis: {station_info.get('aps', {})}")
+        print(f"  Taxa Total de Recepção (RX): {total_rx:.2f} Mbps")
+        print(f"  Taxa Total de Transmissão (TX): {total_tx:.2f} Mbps")
+        print("-------------------------------------------------------------------------------")
+    print("===============================================================================")
 
     return report
 
@@ -180,7 +183,10 @@ class StationMetrics(threading.Thread):
     def get_ap_strengths(self, station_name):
         ssifname = station_name + "-wlan0"
         cmd = ['./m', station_name, 'iw', 'dev', ssifname, 'scan']
+        print(cmd)
+        print(f"Getting AP strengths for {station_name}...")
         output = run_cmd(cmd)
+        print(output)
         if output:
             stations_aps[station_name] = {
                 'aps': get_signal_strengths(output),
@@ -221,16 +227,45 @@ class Listener(threading.Thread):
             self.migrate(data)
 
     def migrate(self, data):
+        print(f"Dados recebidos para migração: {data}")
         ifname = data['station_name'] + '-wlan0'
-
-        cmd = ['./m', data['station_name'], 'iw', 'dev', ifname, 'disconnect']
-        print(cmd)
-        print(run_cmd(cmd))
-
-        cmd = ['./m', data['station_name'], 'iw', 'dev', ifname, 'connect', data['ssid']]
-        print(cmd)
-        print(run_cmd(cmd))
-        print()
+    
+        # Verificar o tipo de ação
+        if data.get('action') == 'disconnect':
+            # Comando de desconexão
+            print(f"Desconectando estação {data['station_name']} do AP atual...")
+            cmd_disconnect = ['./m', data['station_name'], 'iw', 'dev', ifname, 'disconnect']
+            print(cmd_disconnect)
+            disconnect_output = run_cmd(cmd_disconnect)
+            print(disconnect_output)
+    
+            # Atualizar métricas do AP para remover a estação desconectada
+            print(f"Atualizando métricas após desconexão de {data['station_name']}...")
+            ap_metrics = measures_ap_metrics()
+            print("Métricas atualizadas.")
+    
+        elif data.get('action') == 'connect':
+            # Verificar se a chave 'ssid' está presente
+            if 'ssid' not in data:
+                print(f"Erro: 'ssid' não encontrado nos dados recebidos: {data}")
+                return
+    
+            # Verificar o estado do link antes de conectar
+            cmd_check_link = ['./m', data['station_name'], 'iw', 'dev', ifname, 'link']
+            print(f"Verificando estado do link para {data['station_name']}...")
+            link_output = run_cmd(cmd_check_link)
+            if link_output and "Not connected" not in link_output:
+                print(f"Erro: Estação {data['station_name']} ainda está conectada. Não é possível conectar ao novo AP.")
+                return
+    
+            # Comando de conexão
+            print(f"Conectando estação {data['station_name']} ao novo AP {data['ssid']}...")
+            cmd_connect = ['./m', data['station_name'], 'iw', 'dev', ifname, 'connect', data['ssid']]
+            print(cmd_connect)
+            connect_output = run_cmd(cmd_connect)
+            print(connect_output)
+        else:
+            print(f"Ação desconhecida: {data.get('action')}")
 
 if __name__ == '__main__':
     read_mappings()

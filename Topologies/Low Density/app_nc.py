@@ -13,8 +13,8 @@ from ryu.lib import hub
 import redis
 import pickle
 
-STATION_THRESHOLD = 10  # Limite de estações por AP
-SIGNAL_THRESHOLD = -75  # Limite de sinal em dBm
+STATION_THRESHOLD = 7
+SIGNAL_THRESHOLD = -95 # dBm
 
 mappings_path = "mappings.txt"
 
@@ -49,33 +49,63 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.monitor_thread = hub.spawn(self.monitor)
 
     def monitor(self):
-        self.logger.info("start ap monitoring thread")
+        self.logger.info("Iniciando thread de monitoramento de APs.")
         for item in self.pubsub.listen():
             tmp = item['data']
-            # ignore the first/initial return
+            # Ignore the first/initial return
             if tmp == 1:
                 continue
             self.statistics = pickle.loads(tmp)
-            print("---------------------------")
-            print("received the statistics ", self.statistics)
-            print("---------------------------")
-            oaps =  self.get_overloaded_aps()
-            print("Overloaded aps", oaps)
-            print("---------------------------")
+    
+            print("\n=========================== Estatísticas Recebidas ===========================")
+            for ap_stat in self.statistics:
+                print(f"AP: {ap_stat['name']} (SSID: {ap_stat['ssid']})")
+                print(f"  Estações Associadas: {len(ap_stat['stations_associated'])}")
+                for station, station_info in ap_stat['stations_associated'].items():
+                    print(f"    Estação: {station}")
+                    print(f"      Sinal dos APs Disponíveis: {station_info.get('aps', {})}")
+                    print(f"      Taxa de Recepção (RX): {station_info.get('rx_rate', 0):.2f} Mbps")
+                    print(f"      Taxa de Transmissão (TX): {station_info.get('tx_rate', 0):.2f} Mbps")
+                print("-------------------------------------------------------------------------------")
+            print("===============================================================================")
+    
+            oaps = self.get_overloaded_aps()
+            print("\n=========================== APs Sobrecarregados ===========================")
+            for ap in oaps:
+                print(f"AP: {ap['name']} (Conexões: {len(ap['stations_associated'])})")
+            print("===============================================================================")
+    
             uaps = self.get_underloaded_aps()
-            print("Underloaded aps", uaps)
-            print("---------------------------")
-            
+            print("\n=========================== APs Subutilizados ===========================")
+            for ap in uaps:
+                print(f"AP: {ap['name']} (Conexões: {len(ap['stations_associated'])})")
+            print("===============================================================================")
+    
             if oaps and len(oaps) > 0 and uaps and len(uaps) > 0:
-                self.get_possible_handover(oaps, uaps)
-
                 station, new_ap = self.get_possible_handover(oaps, uaps)
-
+            
                 if station and new_ap:
-                    migration_instruction = {'station_name': station, 'ssid': new_ap}
-                    print("station to be migrated ", migration_instruction)
-                    print("---------------------------")
-
+                    print("\n=========================== Migração Planejada ===========================")
+                    print(f"Estação a ser migrada: {station}")
+                    print(f"Novo AP: {new_ap}")
+                    print("===============================================================================")
+            
+                    # Verificar o estado do link da estação
+                    station_mac = name_ip_mac_mappings[station]['mac']
+                    current_ap = None
+                    for ap in oaps:
+                        if station in ap['stations_associated']:
+                            current_ap = ap['name']
+                            break
+            
+                    if current_ap:
+                        print(f"Estação {station} ainda está associada ao AP atual: {current_ap}. Desassociando...")
+                        # Publicar comando para desconectar a estação do AP atual
+                        disconnect_instruction = {'station_name': station, 'action': 'disconnect'}
+                        self.redis.publish("sdn", pickle.dumps(disconnect_instruction))
+            
+                    # Publicar comando para conectar ao novo AP
+                    migration_instruction = {'station_name': station, 'ssid': new_ap, 'action': 'connect'}
                     pvalue = pickle.dumps(migration_instruction)
                     self.delete_flows_with_ip_and_mac(name_ip_mac_mappings[station])
                     self.redis.publish("sdn", pvalue)
