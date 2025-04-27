@@ -1,0 +1,51 @@
+=== Estatísticas para No Load Balancer ===
+Host: 10.0.0.2
+  Média de Vazão (Mbps): 8.25
+  Média de Perda de Pacotes (%): 11.22
+
+Host: 10.0.0.3
+  Média de Vazão (Mbps): 8.28
+  Média de Perda de Pacotes (%): 12.53
+
+Host: 10.0.0.4
+  Média de Vazão (Mbps): 8.28
+  Média de Perda de Pacotes (%): 13.41
+
+Host: 10.0.0.5
+  Média de Vazão (Mbps): 12.98
+  Média de Perda de Pacotes (%): 0.18
+
+=== Estatísticas para With NC ===
+Host: 10.0.0.2
+  Média de Vazão (Mbps): 12.27
+  Média de Perda de Pacotes (%): 1.46
+
+Host: 10.0.0.3
+  Média de Vazão (Mbps): 12.88
+  Média de Perda de Pacotes (%): 0.93
+
+Host: 10.0.0.4
+  Média de Vazão (Mbps): 12.91
+  Média de Perda de Pacotes (%): 0.70
+
+Host: 10.0.0.5
+  Média de Vazão (Mbps): 12.99
+  Média de Perda de Pacotes (%): 0.06
+
+=== Estatísticas para With Load Balancer ===
+Host: 10.0.0.2
+  Média de Vazão (Mbps): 11.48
+  Média de Perda de Pacotes (%): 2.26
+
+Host: 10.0.0.3
+  Média de Vazão (Mbps): 12.10
+  Média de Perda de Pacotes (%): 4.90
+
+Host: 10.0.0.4
+  Média de Vazão (Mbps): 12.12
+  Média de Perda de Pacotes (%): 4.69
+
+Host: 10.0.0.5
+  Média de Vazão (Mbps): 12.98
+  Média de Perda de Pacotes (%): 0.16
+
