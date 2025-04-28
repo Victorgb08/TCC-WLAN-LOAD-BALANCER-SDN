@@ -17,11 +17,11 @@ for i in high_traffic:
 
 # Gera tráfego para o grupo de tráfego médio
 for i in medium_traffic:
-    os.system(f'./m sta{i} iperf -c 10.0.0.1 -u -p 8 -b 2m -t 120 &')  # 5 Mbps
+    os.system(f'./m sta{i} iperf -c 10.0.0.1 -u -p 8 -b 5m -t 120 &')  # 5 Mbps
 
 # Gera tráfego para o grupo de tráfego baixo
 for i in low_traffic:
-    os.system(f'./m sta{i} iperf -c 10.0.0.1 -u -p 8 -b 2m -t 120 &')  # 2 Mbps
+    os.system(f'./m sta{i} iperf -c 10.0.0.1 -u -p 8 -b 10m -t 120 &')  # 2 Mbps
 
 # Aguarda o término do tráfego
 time.sleep(130)

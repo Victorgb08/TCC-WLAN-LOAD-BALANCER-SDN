@@ -12,7 +12,7 @@ from ryu.lib import hub
 import redis
 import pickle
 
-LOAD_THRESHOLD = 13  # 13 Mbps
+LOAD_THRESHOLD = 600  # 13 Mbps
 SIGNAL_THRESHOLD = -95  # dBm
 
 mappings_path = "mappings.txt"
