@@ -15,7 +15,7 @@ ap_metrics = []
 
 mappings_path = "mappings.txt"
 AP_METRICS_PERIOD_IN_SECONDS = 10
-REDIS_UPDATE_PERIOD_IN_SECONDS = 20
+REDIS_UPDATE_PERIOD_IN_SECONDS = 10
 
 # Utility functions
 
@@ -30,7 +30,7 @@ def read_mappings():
     print('aps', stations_aps)
 
 # Execute the command
-def run_cmd(cmd, timeout=40):  # Aumentado o timeout para 15 segundos
+def run_cmd(cmd, timeout=15):  # Aumentado o timeout para 15 segundos
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, timeout=timeout)
         return output.decode('UTF-8', 'ignore')
@@ -183,10 +183,7 @@ class StationMetrics(threading.Thread):
     def get_ap_strengths(self, station_name):
         ssifname = station_name + "-wlan0"
         cmd = ['./m', station_name, 'iw', 'dev', ssifname, 'scan']
-        print(cmd)
-        print(f"Getting AP strengths for {station_name}...")
         output = run_cmd(cmd)
-        print(output)
         if output:
             stations_aps[station_name] = {
                 'aps': get_signal_strengths(output),
@@ -227,45 +224,16 @@ class Listener(threading.Thread):
             self.migrate(data)
 
     def migrate(self, data):
-        print(f"Dados recebidos para migração: {data}")
         ifname = data['station_name'] + '-wlan0'
-    
-        # Verificar o tipo de ação
-        if data.get('action') == 'disconnect':
-            # Comando de desconexão
-            print(f"Desconectando estação {data['station_name']} do AP atual...")
-            cmd_disconnect = ['./m', data['station_name'], 'iw', 'dev', ifname, 'disconnect']
-            print(cmd_disconnect)
-            disconnect_output = run_cmd(cmd_disconnect)
-            print(disconnect_output)
-    
-            # Atualizar métricas do AP para remover a estação desconectada
-            print(f"Atualizando métricas após desconexão de {data['station_name']}...")
-            ap_metrics = measures_ap_metrics()
-            print("Métricas atualizadas.")
-    
-        elif data.get('action') == 'connect':
-            # Verificar se a chave 'ssid' está presente
-            if 'ssid' not in data:
-                print(f"Erro: 'ssid' não encontrado nos dados recebidos: {data}")
-                return
-    
-            # Verificar o estado do link antes de conectar
-            cmd_check_link = ['./m', data['station_name'], 'iw', 'dev', ifname, 'link']
-            print(f"Verificando estado do link para {data['station_name']}...")
-            link_output = run_cmd(cmd_check_link)
-            if link_output and "Not connected" not in link_output:
-                print(f"Erro: Estação {data['station_name']} ainda está conectada. Não é possível conectar ao novo AP.")
-                return
-    
-            # Comando de conexão
-            print(f"Conectando estação {data['station_name']} ao novo AP {data['ssid']}...")
-            cmd_connect = ['./m', data['station_name'], 'iw', 'dev', ifname, 'connect', data['ssid']]
-            print(cmd_connect)
-            connect_output = run_cmd(cmd_connect)
-            print(connect_output)
-        else:
-            print(f"Ação desconhecida: {data.get('action')}")
+
+        cmd = ['./m', data['station_name'], 'iw', 'dev', ifname, 'disconnect']
+        print(cmd)
+        print(run_cmd(cmd))
+
+        cmd = ['./m', data['station_name'], 'iw', 'dev', ifname, 'connect', data['ssid']]
+        print(cmd)
+        print(run_cmd(cmd))
+        print()
 
 if __name__ == '__main__':
     read_mappings()
