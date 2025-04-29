@@ -1,0 +1,264 @@
+=========================== Estatísticas Recebidas ===========================
+AP: ap1 (SSID: ssid-ap1)
+  Estações Associadas: 6
+    Estação: sta13
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-72', 'ssid-ap4': '-90', 'ssid-ap2': '-72'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta14
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-72', 'ssid-ap4': '-64', 'ssid-ap5': '-83', 'ssid-ap2': '-72'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta15
+      Sinal dos APs Disponíveis: {'ssid-ap2': '-68', 'ssid-ap1': '-89', 'ssid-ap5': '-90', 'ssid-ap3': '-76'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta16
+      Sinal dos APs Disponíveis: {'ssid-ap2': '-44', 'ssid-ap4': '-87', 'ssid-ap1': '-83', 'ssid-ap5': '-86', 'ssid-ap3': '-78'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta21
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-80', 'ssid-ap4': '-36', 'ssid-ap2': '-79', 'ssid-ap5': '-79', 'ssid-ap6': '-85'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta22
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-85', 'ssid-ap4': '-47', 'ssid-ap2': '-88', 'ssid-ap5': '-84', 'ssid-ap6': '-81'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+AP: ap2 (SSID: ssid-ap2)
+  Estações Associadas: 6
+    Estação: sta19
+      Sinal dos APs Disponíveis: {'ssid-ap3': '-53', 'ssid-ap2': '-85', 'ssid-ap5': '-81'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta20
+      Sinal dos APs Disponíveis: {'ssid-ap3': '-57', 'ssid-ap2': '-88', 'ssid-ap5': '-89'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta23
+      Sinal dos APs Disponíveis: {'ssid-ap4': '-82', 'ssid-ap2': '-71', 'ssid-ap5': '-64', 'ssid-ap3': '-73', 'ssid-ap1': '-90'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta8
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-39', 'ssid-ap4': '-79', 'ssid-ap2': '-78'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta10
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-44', 'ssid-ap4': '-83', 'ssid-ap2': '-75'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta9
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-71', 'ssid-ap4': '-90', 'ssid-ap2': '-73'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+AP: ap3 (SSID: ssid-ap3)
+  Estações Associadas: 2
+    Estação: sta11
+      Sinal dos APs Disponíveis: {'ssid-ap2': '-60', 'ssid-ap1': '-79', 'ssid-ap4': '-71', 'ssid-ap5': '-77', 'ssid-ap3': '-85'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta17
+      Sinal dos APs Disponíveis: {'ssid-ap3': '-65', 'ssid-ap2': '-86'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+AP: ap4 (SSID: ssid-ap4)
+  Estações Associadas: 6
+    Estação: sta1
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-64', 'ssid-ap4': '-80', 'ssid-ap2': '-88'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta2
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-59', 'ssid-ap4': '-89', 'ssid-ap2': '-88'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta3
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-60', 'ssid-ap4': '-83', 'ssid-ap2': '-88'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta5
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-64', 'ssid-ap2': '-64', 'ssid-ap4': '-78', 'ssid-ap5': '-87', 'ssid-ap3': '-90'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta6
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-58', 'ssid-ap4': '-90', 'ssid-ap2': '-86'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta7
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-66', 'ssid-ap4': '-90', 'ssid-ap2': '-78'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+AP: ap5 (SSID: ssid-ap5)
+  Estações Associadas: 4
+    Estação: sta24
+      Sinal dos APs Disponíveis: {'ssid-ap4': '-90', 'ssid-ap5': '-88', 'ssid-ap6': '-57'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta12
+      Sinal dos APs Disponíveis: {'ssid-ap2': '-55', 'ssid-ap1': '-70', 'ssid-ap4': '-80', 'ssid-ap5': '-87', 'ssid-ap3': '-87'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta18
+      Sinal dos APs Disponíveis: {'ssid-ap3': '-54', 'ssid-ap2': '-87', 'ssid-ap5': '-88'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+    Estação: sta4
+      Sinal dos APs Disponíveis: {'ssid-ap1': '-53', 'ssid-ap4': '-75', 'ssid-ap5': '-90', 'ssid-ap2': '-76'}
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+AP: ap6 (SSID: ssid-ap6)
+  Estações Associadas: 0
+-------------------------------------------------------------------------------
+===============================================================================
+
+
+ASSIMETRICO NC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=========================== Métricas dos APs ===========================
+AP: ap1
+  Estações Associadas: 18
+    Estação: sta1
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta2
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta3
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta4
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta5
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta6
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta7
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta8
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta9
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta10
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta11
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta12
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta13
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta14
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta15
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta16
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta21
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta22
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+  Taxa Total de Recepção (RX): 0.01 Mbps
+  Taxa Total de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+AP: ap2
+  Estações Associadas: 5
+    Estação: sta17
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta18
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta19
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta20
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+    Estação: sta23
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+  Taxa Total de Recepção (RX): 0.00 Mbps
+  Taxa Total de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+AP: ap3
+  Estações Associadas: 0
+  Taxa Total de Recepção (RX): 0.00 Mbps
+  Taxa Total de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+AP: ap4
+  Estações Associadas: 1
+    Estação: sta24
+      Taxa de Recepção (RX): 0.00 Mbps
+      Taxa de Transmissão (TX): 0.00 Mbps
+      Sinal dos APs Disponíveis: {}
+  Taxa Total de Recepção (RX): 0.00 Mbps
+  Taxa Total de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+AP: ap5
+  Estações Associadas: 0
+  Taxa Total de Recepção (RX): 0.00 Mbps
+  Taxa Total de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+AP: ap6
+  Estações Associadas: 0
+  Taxa Total de Recepção (RX): 0.00 Mbps
+  Taxa Total de Transmissão (TX): 0.00 Mbps
+-------------------------------------------------------------------------------
+===============================================================================
+
+
+Assimetrica Load e NoLB
