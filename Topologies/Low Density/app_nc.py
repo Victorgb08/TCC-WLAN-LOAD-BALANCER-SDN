@@ -83,29 +83,14 @@ class SimpleSwitch13(app_manager.RyuApp):
     
             if oaps and len(oaps) > 0 and uaps and len(uaps) > 0:
                 station, new_ap = self.get_possible_handover(oaps, uaps)
-            
+    
                 if station and new_ap:
                     print("\n=========================== Migração Planejada ===========================")
                     print(f"Estação a ser migrada: {station}")
                     print(f"Novo AP: {new_ap}")
                     print("===============================================================================")
-            
-                    # Verificar o estado do link da estação
-                    station_mac = name_ip_mac_mappings[station]['mac']
-                    current_ap = None
-                    for ap in oaps:
-                        if station in ap['stations_associated']:
-                            current_ap = ap['name']
-                            break
-            
-                    if current_ap:
-                        print(f"Estação {station} ainda está associada ao AP atual: {current_ap}. Desassociando...")
-                        # Publicar comando para desconectar a estação do AP atual
-                        disconnect_instruction = {'station_name': station, 'action': 'disconnect'}
-                        self.redis.publish("sdn", pickle.dumps(disconnect_instruction))
-            
-                    # Publicar comando para conectar ao novo AP
-                    migration_instruction = {'station_name': station, 'ssid': new_ap, 'action': 'connect'}
+    
+                    migration_instruction = {'station_name': station, 'ssid': new_ap}
                     pvalue = pickle.dumps(migration_instruction)
                     self.delete_flows_with_ip_and_mac(name_ip_mac_mappings[station])
                     self.redis.publish("sdn", pvalue)
