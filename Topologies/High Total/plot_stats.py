@@ -93,9 +93,9 @@ try:
                 if "sta1" <= row['station'] <= "sta6":
                     traffic_generated = 10
                 elif "sta7" <= row['station'] <= "sta12":
-                    traffic_generated = 5
+                    traffic_generated = 10
                 else:
-                    traffic_generated = 2
+                    traffic_generated = 10
                 
                 latex_f.write(f"        {row['station']} & {row['avg_bandwidth_mbps']:.2f} & {row['avg_loss_percentage']:.2f} & {traffic_generated} \\\\ \\hline\n")
             

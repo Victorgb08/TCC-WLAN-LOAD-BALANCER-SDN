@@ -46,6 +46,14 @@ data['timestamp'] = pd.to_datetime(data['timestamp'], format='%Y%m%d%H%M%S')
 # Converter largura de banda de bps para Mbps
 data['bandwidth_mbps'] = data['bandwidth_bps'] / 1_000_000
 
+# Ordenar os IPs em ordem crescente e criar o mapeamento para sta{x-1}
+sorted_ips = sorted(data['src_ip'].unique())
+ip_to_sta = {ip: f"sta{int(ip.split('.')[-1]) - 1}" for ip in sorted_ips}
+print(ip_to_sta)
+
+# Substituir os IPs pelos nomes das estações no DataFrame
+data['station'] = data['src_ip'].map(ip_to_sta)
+
 # Exibir informações básicas para depuração
 print("Dados carregados:")
 print(data.head())
@@ -56,17 +64,16 @@ print(data['bandwidth_mbps'].describe())
 
 # Criar um único gráfico com todas as estações (largura de banda)
 plt.figure(figsize=(12, 8))
-unique_src_ips = data['src_ip'].unique()
 
-for src_ip in unique_src_ips:
-    subset = data[data['src_ip'] == src_ip]
-    sns.lineplot(data=subset, x="timestamp", y="bandwidth_mbps", label=src_ip, marker='o')
+for station in data['station'].unique():
+    subset = data[data['station'] == station]
+    sns.lineplot(data=subset, x="timestamp", y="bandwidth_mbps", label=station, marker='o')
 
 # Configurar o gráfico de largura de banda
 plt.title("Largura de Banda ao Longo do Tempo - Todas as Estações")
 plt.xlabel("Tempo")
 plt.ylabel("Largura de Banda (Mbps)")
-plt.legend(title="Estação (src_ip)", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small')
+plt.legend(title="Estação", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small')
 plt.grid(True)
 plt.tight_layout()
 
@@ -79,15 +86,15 @@ plt.close()
 # Criar um gráfico de perda de pacotes por host
 plt.figure(figsize=(12, 8))
 
-for src_ip in unique_src_ips:
-    subset = data[data['src_ip'] == src_ip]
-    sns.lineplot(data=subset, x="timestamp", y="loss_percentage", label=src_ip, marker='o')
+for station in data['station'].unique():
+    subset = data[data['station'] == station]
+    sns.lineplot(data=subset, x="timestamp", y="loss_percentage", label=station, marker='o')
 
 # Configurar o gráfico de perda de pacotes
 plt.title("Perda de Pacotes ao Longo do Tempo - Todas as Estações")
 plt.xlabel("Tempo")
 plt.ylabel("Perda de Pacotes (%)")
-plt.legend(title="Estação (src_ip)", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small')
+plt.legend(title="Estação", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small')
 plt.grid(True)
 plt.tight_layout()
 

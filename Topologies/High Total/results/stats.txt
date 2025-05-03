@@ -1,0 +1,243 @@
+=== Estatísticas para No Load Balancer ===
+Host: sta1
+  Média de Vazão (Mbps): 1.76
+  Média de Perda de Pacotes (%): 24.72
+
+Host: sta2
+  Média de Vazão (Mbps): 1.92
+  Média de Perda de Pacotes (%): 24.30
+
+Host: sta3
+  Média de Vazão (Mbps): 1.78
+  Média de Perda de Pacotes (%): 28.37
+
+Host: sta4
+  Média de Vazão (Mbps): 1.78
+  Média de Perda de Pacotes (%): 27.99
+
+Host: sta5
+  Média de Vazão (Mbps): 1.74
+  Média de Perda de Pacotes (%): 22.80
+
+Host: sta6
+  Média de Vazão (Mbps): 1.73
+  Média de Perda de Pacotes (%): 21.84
+
+Host: sta7
+  Média de Vazão (Mbps): 1.78
+  Média de Perda de Pacotes (%): 21.40
+
+Host: sta8
+  Média de Vazão (Mbps): 1.75
+  Média de Perda de Pacotes (%): 20.50
+
+Host: sta9
+  Média de Vazão (Mbps): 4.98
+  Média de Perda de Pacotes (%): 0.56
+
+Host: sta10
+  Média de Vazão (Mbps): 4.98
+  Média de Perda de Pacotes (%): 0.52
+
+Host: sta11
+  Média de Vazão (Mbps): 1.99
+  Média de Perda de Pacotes (%): 0.53
+
+Host: sta12
+  Média de Vazão (Mbps): 1.99
+  Média de Perda de Pacotes (%): 0.49
+
+Host: sta13
+  Média de Vazão (Mbps): 2.05
+  Média de Perda de Pacotes (%): 3.74
+
+Host: sta14
+  Média de Vazão (Mbps): 1.99
+  Média de Perda de Pacotes (%): 0.61
+
+Host: sta15
+  Média de Vazão (Mbps): 2.04
+  Média de Perda de Pacotes (%): 3.70
+
+Host: sta16
+  Média de Vazão (Mbps): 1.99
+  Média de Perda de Pacotes (%): 0.55
+
+Host: sta17
+  Média de Vazão (Mbps): 2.00
+  Média de Perda de Pacotes (%): 0.54
+
+Host: sta18
+  Média de Vazão (Mbps): 2.00
+  Média de Perda de Pacotes (%): 0.55
+
+Host: sta19
+  Média de Vazão (Mbps): 2.00
+  Média de Perda de Pacotes (%): 0.57
+
+Host: sta20
+  Média de Vazão (Mbps): 1.99
+  Média de Perda de Pacotes (%): 0.57
+
+=== Estatísticas para With NC ===
+Host: sta1
+  Média de Vazão (Mbps): 7.52
+  Média de Perda de Pacotes (%): 20.28
+
+Host: sta2
+  Média de Vazão (Mbps): 7.52
+  Média de Perda de Pacotes (%): 21.08
+
+Host: sta3
+  Média de Vazão (Mbps): 7.54
+  Média de Perda de Pacotes (%): 19.82
+
+Host: sta4
+  Média de Vazão (Mbps): 7.47
+  Média de Perda de Pacotes (%): 18.20
+
+Host: sta5
+  Média de Vazão (Mbps): 8.44
+  Média de Perda de Pacotes (%): 11.19
+
+Host: sta6
+  Média de Vazão (Mbps): 4.37
+  Média de Perda de Pacotes (%): 6.66
+
+Host: sta7
+  Média de Vazão (Mbps): 4.24
+  Média de Perda de Pacotes (%): 7.30
+
+Host: sta8
+  Média de Vazão (Mbps): 3.62
+  Média de Perda de Pacotes (%): 19.20
+
+Host: sta9
+  Média de Vazão (Mbps): 4.95
+  Média de Perda de Pacotes (%): 0.99
+
+Host: sta10
+  Média de Vazão (Mbps): 4.95
+  Média de Perda de Pacotes (%): 1.37
+
+Host: sta11
+  Média de Vazão (Mbps): 1.98
+  Média de Perda de Pacotes (%): 1.03
+
+Host: sta12
+  Média de Vazão (Mbps): 1.98
+  Média de Perda de Pacotes (%): 0.96
+
+Host: sta13
+  Média de Vazão (Mbps): 1.92
+  Média de Perda de Pacotes (%): 1.63
+
+Host: sta14
+  Média de Vazão (Mbps): 1.91
+  Média de Perda de Pacotes (%): 1.81
+
+Host: sta15
+  Média de Vazão (Mbps): 1.92
+  Média de Perda de Pacotes (%): 1.59
+
+Host: sta16
+  Média de Vazão (Mbps): 1.91
+  Média de Perda de Pacotes (%): 1.85
+
+Host: sta17
+  Média de Vazão (Mbps): 1.98
+  Média de Perda de Pacotes (%): 1.12
+
+Host: sta18
+  Média de Vazão (Mbps): 1.98
+  Média de Perda de Pacotes (%): 1.04
+
+Host: sta19
+  Média de Vazão (Mbps): 1.98
+  Média de Perda de Pacotes (%): 1.52
+
+Host: sta20
+  Média de Vazão (Mbps): 1.99
+  Média de Perda de Pacotes (%): 0.90
+
+=== Estatísticas para With Load Balancer ===
+Host: sta1
+  Média de Vazão (Mbps): 2.14
+  Média de Perda de Pacotes (%): 32.57
+
+Host: sta2
+  Média de Vazão (Mbps): 3.22
+  Média de Perda de Pacotes (%): 31.92
+
+Host: sta3
+  Média de Vazão (Mbps): 1.86
+  Média de Perda de Pacotes (%): 30.71
+
+Host: sta4
+  Média de Vazão (Mbps): 1.81
+  Média de Perda de Pacotes (%): 31.58
+
+Host: sta5
+  Média de Vazão (Mbps): 4.73
+  Média de Perda de Pacotes (%): 18.21
+
+Host: sta6
+  Média de Vazão (Mbps): 2.92
+  Média de Perda de Pacotes (%): 17.82
+
+Host: sta7
+  Média de Vazão (Mbps): 3.17
+  Média de Perda de Pacotes (%): 23.27
+
+Host: sta8
+  Média de Vazão (Mbps): 2.66
+  Média de Perda de Pacotes (%): 24.09
+
+Host: sta9
+  Média de Vazão (Mbps): 4.97
+  Média de Perda de Pacotes (%): 0.68
+
+Host: sta10
+  Média de Vazão (Mbps): 4.97
+  Média de Perda de Pacotes (%): 0.65
+
+Host: sta11
+  Média de Vazão (Mbps): 1.99
+  Média de Perda de Pacotes (%): 0.61
+
+Host: sta12
+  Média de Vazão (Mbps): 1.99
+  Média de Perda de Pacotes (%): 0.67
+
+Host: sta13
+  Média de Vazão (Mbps): 1.99
+  Média de Perda de Pacotes (%): 1.50
+
+Host: sta14
+  Média de Vazão (Mbps): 1.98
+  Média de Perda de Pacotes (%): 3.92
+
+Host: sta15
+  Média de Vazão (Mbps): 1.99
+  Média de Perda de Pacotes (%): 1.46
+
+Host: sta16
+  Média de Vazão (Mbps): 2.00
+  Média de Perda de Pacotes (%): 4.18
+
+Host: sta17
+  Média de Vazão (Mbps): 2.02
+  Média de Perda de Pacotes (%): 3.80
+
+Host: sta18
+  Média de Vazão (Mbps): 2.01
+  Média de Perda de Pacotes (%): 3.87
+
+Host: sta19
+  Média de Vazão (Mbps): 2.01
+  Média de Perda de Pacotes (%): 3.87
+
+Host: sta20
+  Média de Vazão (Mbps): 2.05
+  Média de Perda de Pacotes (%): 3.81
+
