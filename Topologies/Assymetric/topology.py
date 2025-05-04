@@ -11,7 +11,7 @@ from mininet.link import TCLink
 from mn_wifi.wmediumdConnector import interference
 
 N_HOSTS = 24  # Número total de hosts
-MAPPINGS_FILE_PATH = "mappings_asymmetric.txt"  # Caminho para o arquivo de mapeamento
+MAPPINGS_FILE_PATH = "mappings.txt"  # Caminho para o arquivo de mapeamento
 
 class Host:
     """Classe para representar um host na topologia."""

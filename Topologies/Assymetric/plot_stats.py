@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import ipaddress
 
 # Caminhos dos arquivos de entrada
 files = ["server_output_nolb.csv", "server_output_nc.csv", "server_output_load.csv"]
@@ -46,13 +47,33 @@ def process_file(file_path, label):
     # Mapear IPs para sta{número}
     data['station'] = data['src_ip'].apply(map_ip_to_sta)
 
+    # Adicionar uma coluna auxiliar para ordenação numérica dos IPs
+    data['src_ip_numeric'] = data['src_ip'].apply(lambda ip: int(ipaddress.IPv4Address(ip)))
+
     # Calcular métricas por estação
-    metrics = data.groupby("station").agg(
+    metrics = data.groupby(["station", "src_ip_numeric"]).agg(
         avg_bandwidth_mbps=("bandwidth_mbps", "mean"),
         avg_loss_percentage=("loss_percentage", "mean")
     ).reset_index()
 
+    # Ordenar as métricas pela coluna numérica do IP
+    metrics = metrics.sort_values(by="src_ip_numeric").drop(columns=["src_ip_numeric"])
+
     return label, metrics
+
+# Processar todos os arquivos e consolidar as métricas
+all_metrics = []
+for file, label in zip(files, labels):
+    result = process_file(file, label)
+    if result:
+        all_metrics.append(result)
+
+# Função para calcular as médias globais de vazão e perda de pacotes
+def calculate_global_metrics(metrics):
+    """Calcula a média global de vazão e perda de pacotes."""
+    avg_bandwidth_global = metrics['avg_bandwidth_mbps'].mean()
+    avg_loss_global = metrics['avg_loss_percentage'].mean()
+    return avg_bandwidth_global, avg_loss_global
 
 # Processar todos os arquivos e consolidar as métricas
 all_metrics = []
@@ -72,16 +93,32 @@ try:
                 f.write(f"  Média de Vazão (Mbps): {row['avg_bandwidth_mbps']:.2f}\n")
                 f.write(f"  Média de Perda de Pacotes (%): {row['avg_loss_percentage']:.2f}\n")
                 f.write("\n")
+            
+            # Calcular as médias globais
+            avg_bandwidth_global, avg_loss_global = calculate_global_metrics(metrics)
+            f.write(f"Média Global de Vazão (Mbps): {avg_bandwidth_global:.2f}\n")
+            f.write(f"Média Global de Perda de Pacotes (%): {avg_loss_global:.2f}\n")
+            f.write("\n")
 
             # Gerar tabela LaTeX
             latex_f.write(f"\\begin{{table}}[htbp]\n")
             latex_f.write(f"    \\centering\n")
-            latex_f.write(f"    \\label{{tab:{label.replace(' ', '_').lower()}_stats}}\n")
-            latex_f.write(f"    \\begin{{tabular}}{{|c|c|c|}}\n")
+            latex_f.write(f"    \\begin{{tabular}}{{|c|>{{\\centering\\arraybackslash}}p{{4cm}}|>{{\\centering\\arraybackslash}}p{{4cm}}|>{{\\centering\\arraybackslash}}p{{4cm}}|}}\n")
             latex_f.write(f"        \\hline\n")
-            latex_f.write(f"        \\textbf{{Host}} & \\textbf{{Média de Vazão (Mbps)}} & \\textbf{{Média de Perda de Pacotes (\\%)}} \\\\ \\hline\n")
+            latex_f.write(f"        \\textbf{{Host}} & \\textbf{{Média de Vazão (Mbps)}} & \\textbf{{Média de Perda de Pacotes (\\%)}} & \\textbf{{Tráfego gerado (Mbps)}} \\\\ \\hline\n")
+            
+            # Adicionar as linhas da tabela
             for _, row in metrics.iterrows():
-                latex_f.write(f"        {row['station']} & {row['avg_bandwidth_mbps']:.2f} & {row['avg_loss_percentage']:.2f} \\\\ \\hline\n")
+                # Definir o tráfego gerado (exemplo: baseado em uma lógica fixa ou calculada)
+                if "sta1" <= row['station'] <= "sta6":
+                    traffic_generated = 10
+                elif "sta7" <= row['station'] <= "sta12":
+                    traffic_generated = 10
+                else:
+                    traffic_generated = 10
+                
+                latex_f.write(f"        {row['station']} & {row['avg_bandwidth_mbps']:.2f} & {row['avg_loss_percentage']:.2f} & {traffic_generated} \\\\ \\hline\n")
+            
             latex_f.write(f"    \\end{{tabular}}\n")
             latex_f.write(f"    \\caption{{Estatísticas de desempenho para o cenário {label.lower()}.}}\n")
             latex_f.write(f"\\end{{table}}\n\n")
